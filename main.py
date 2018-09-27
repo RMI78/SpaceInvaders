@@ -1,6 +1,6 @@
 import pygame
 from classes import *
-from Functions import *
+from functions import *
 
 #ignite the window with title and size
 pygame.init()
