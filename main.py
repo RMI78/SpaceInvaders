@@ -8,8 +8,8 @@ window = pygame.display.set_mode((1920, 1200), pygame.RESIZABLE)
 pygame.display.set_caption("Space Invaders")
 
 #load pics and resize it, load clock, load player and aim
-icon = load_file("SpaceInvaders_icon.jpg")
-background = load_file("Background.png")
+icon = load_file("./images/spaceInvaders_icon.jpg")
+background = load_file("./images/background.png")
 background = pygame.transform.scale(background, (1920, 1200))
 
 pygame.display.set_icon(icon)
