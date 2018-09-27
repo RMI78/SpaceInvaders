@@ -11,8 +11,10 @@ pygame.display.set_caption("Space Invaders")
 icon = load_file("SpaceInvaders_icon.jpg")
 background = load_file("Background.png")
 background = pygame.transform.scale(background, (1920, 1200))
+
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
+
 aim = Aim()
 player = Player()
 allsprites = pygame.sprite.RenderPlain((player, aim))
