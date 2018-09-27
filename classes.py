@@ -5,8 +5,7 @@ import math
 class Aim(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		picAim = pygame.transform.scale(load_file("aim.png"), (percentPix(2, True), percentPix(2, False)))
-		self.image = picAim
+		self.image = pygame.transform.scale(load_file("aim.png"), (percentPix(2, True), percentPix(2, False)))
 		self.rect = self.image.get_rect()
 		screen = pygame.display.get_surface()
 		self.area = screen.get_rect()
@@ -33,17 +32,15 @@ class Bullet(pygame.sprite.Sprite):
 
 	def update(self, element):
 		self.rect.x = self.rect.x + 10
-		if self.distanceX != 0 or self.distanceY != 0 or self.posXElement != 0 or self.rect.x != 0 or self.posYElement != 0 or self.rect.y != 0:
+		if 0 not in (self.distanceX, self.distanceY, self.posXElement, self.rect.x, self.posYElement, self.rect.y):
 			self.rect.y = self.posYElement - ((self.distanceY / self.distanceX ) *  (self.posXElement - self.rect.x ))
-
 
 
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		avatar = pygame.transform.scale(load_file("SpaceShip.png"), (percentPix(8, True), percentPix(10, False)))
-		self.image = avatar
+		self.image = pygame.transform.scale(load_file("SpaceShip.png"), (percentPix(8, True), percentPix(10, False)))
 		self.rect = self.image.get_rect()
 		self.width, self.height = pygame.display.get_surface().get_size()
 		self.alive = True
