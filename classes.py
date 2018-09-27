@@ -1,5 +1,5 @@
 import pygame
-from Functions import *
+from functions import *
 import math
 
 class Aim(pygame.sprite.Sprite):
