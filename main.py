@@ -4,7 +4,7 @@ from functions import *
 
 #ignite the window with title and size
 pygame.init()
-window = pygame.display.set_mode((1920, 1200), pygame.RESIZABLE)
+window = pygame.display.set_mode((1920, 1020), pygame.RESIZABLE)
 pygame.display.set_caption("Space Invaders")
 
 #load pics and resize it, load clock, load player and aim
