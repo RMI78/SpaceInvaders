@@ -4,12 +4,14 @@ from Functions import *
 
 #ignite the window with title and size
 pygame.init()
-window = pygame.display.set_mode((1920, 1200), pygame.RESIZABLE)
+infos = pygame.display.Info()
+window = pygame.display.set_mode((infos.current_w, infos.current_h), pygame.RESIZABLE)
 pygame.display.set_caption("Space Invaders")
+Font = pygame.font.SysFont("monospace", 15)
 
 #load pics and resize it, load clock, load player and aim
-icon = load_file("SpaceInvaders_icon.jpg")
-background = load_file("Background.png")
+icon = load_file("pictures/SpaceInvaders_icon.jpg")
+background = load_file("pictures/Background.png")
 background = pygame.transform.scale(background, (1920, 1200))
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
@@ -64,6 +66,9 @@ while loop:
 	if state == PAUSE:
 		pauseSurf.set_alpha(255)
 		pauseLoop = True
+		PauseFont = Font.render("PAUSE", True,[255, 255, 255])
+		window.blit(pauseSurf, (0,0))
+		window.blit(PauseFont, (percentPix(47, True),percentPix(40, False)))
 		for eventPause in pygame.event.get():
 			if eventPause.type == pygame.KEYDOWN:
 				if eventPause.key == pygame.K_ESCAPE:

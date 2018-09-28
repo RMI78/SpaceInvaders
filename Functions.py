@@ -11,7 +11,7 @@ def load_file(File):
 				print("Can't load image:", File)
 				raise SystemExit(message)
 		return image
-	if ".mp3" in File or ".wav" in File:
+	if ".mp3" in File or ".wav" in File or ".flac" in File:
 		class NoneSound:
 			def play(self): pass
 		if not pygame.mixer:
