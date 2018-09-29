@@ -11,7 +11,6 @@ class Aim:
 		self.display.blit(self.image, pygame.mouse.get_pos())
 
 
-
 class Bullet:
 	def __init__(self, display, x, y):
 		self.image = pygame.transform.scale(load_file("./images/bullet.png"), (percentPix(2, True), percentPix(2, False)))
@@ -25,8 +24,6 @@ class Bullet:
 
 		elif self.coof < -0.1:
 			self.coof = -0.1
-		print(self.coof)
-
 
 
 	def update(self):
@@ -62,9 +59,14 @@ class Player:
 		self.list_bullets.append(self.bullet(self.display, self.rect.x, self.rect.y))
 
 	def update(self):
+		print(self.list_bullets)
 		for bullet in self.list_bullets:
 			bullet.update()
-			self.display.blit(bullet.image, (bullet.x, bullet.y))
+			if bullet.x > pygame.display.get_surface().get_size()[0] or bullet.y > pygame.display.get_surface().get_size()[-1]:
+				del(self.list_bullets[self.list_bullets.index(bullet)])
+
+			else:
+				self.display.blit(bullet.image, (bullet.x, bullet.y))
 
 		self.display.blit(self.image, (self.rect.x, self.rect.y-self.height/2))
 
