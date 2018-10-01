@@ -12,7 +12,7 @@ Font = pygame.font.SysFont("monospace", 15)
 #load pics and resize it, load clock, load player and aim
 icon = load_file("pictures/SpaceInvaders_icon.jpg")
 background = load_file("pictures/Background.png")
-background = pygame.transform.scale(background, (1920, 1200))
+background = pygame.transform.scale(background, (infos.current_w, infos.current_h))
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
 aim = Aim()
@@ -31,9 +31,9 @@ pauseSurf.set_alpha(0)
 #start the window loop
 loop = True
 while loop:
+	clock.tick(30)
 	#the play part
 	if state == RUNNING:
-		clock.tick(30)
 		window.blit(background, (0,0))
 		window.blit(pauseSurf, (0,0))
 		allsprites.draw(window)
@@ -68,11 +68,21 @@ while loop:
 		pauseLoop = True
 		PauseFont = Font.render("PAUSE", True,[255, 255, 255])
 		window.blit(pauseSurf, (0,0))
-		window.blit(PauseFont, (percentPix(47, True),percentPix(40, False)))
+		window.blit(PauseFont, (percentPix(47, True),percentPix(35, False)))
+		image = Buttonify("pictures/GraySquareButton.png", (percentPix(60, True), percentPix(45, False)), pauseSurf)
+		pygame.mouse.set_visible(True)
 		for eventPause in pygame.event.get():
+			if eventPause.type == pygame.QUIT:
+				state = RUNNING
+				loop = False
+			if eventPause.type == pygame.MOUSEBUTTONDOWN and eventPause.button == 1:
+				mouse = pygame.mouse.get_pos
+				if image[1].colliderect(mouse):
+					print("test reussi!")
 			if eventPause.type == pygame.KEYDOWN:
 				if eventPause.key == pygame.K_ESCAPE:
 					pauseSurf.set_alpha(0)
+					pygame.mouse.set_visible(False)
 					state = RUNNING
 			if event.type == pygame.QUIT:
 				loop = False
