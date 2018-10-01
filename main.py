@@ -2,14 +2,20 @@ import pygame
 from classes import *
 from functions import *
 
-#ignite the window with title and size
+
+#ignite pygame
 pygame.init()
+
+#ignite the window with title and size
 infos = pygame.display.Info()
 window = pygame.display.set_mode((infos.current_w, infos.current_h), pygame.RESIZABLE)
 pygame.display.set_caption("Space Invaders")
+
+#ignite fonts
 Font = pygame.font.SysFont("monospace", 15)
 
 #load pics and resize it, load clock, load player and aim
+
 icon = load_file("./pictures/spaceInvaders_icon.jpg")
 background = load_file("./pictures/Background.png")
 background = pygame.transform.scale(background, displaySize)
@@ -30,6 +36,7 @@ while loop:
 	clock.tick(60)
 	#the play part
 	if state == RUNNING:
+
 		window.blit(background, (0,0))
 		window.blit(pauseSurf, (0,0))
 		allsprites.draw(window)
@@ -53,6 +60,7 @@ while loop:
 				player.shoot()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE: state = PAUSE
+
 		bullet_list.update(player)
 
 	#the pause part
@@ -79,6 +87,7 @@ while loop:
 					state = RUNNING
 			if event.type == pygame.QUIT:
 				loop = False
+
 
 
 

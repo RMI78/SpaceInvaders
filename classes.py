@@ -2,6 +2,7 @@ import pygame
 from functions import *
 import math
 
+
 #classe which create buttons
 #to use, proceed this way:
 #if event.type == MOUSEBUTTONDOWN and event.button == 1:
@@ -16,11 +17,11 @@ def Buttonify(Picture, coords, surface):
 	return (image, imagerect)
 
 #classe which represent the aim
-class Aim(pygame.sprite.Sprite):
-	#the init method
+class Aim:
 	def __init__(self, display):
 		self.display = display
 		self.image = pygame.transform.scale(load_file("./pictures/aim.png"), (percentPix(2, True), percentPix(2, False)))
+
 
 	#the update method for the position
 	def focusAim(self):
@@ -29,7 +30,7 @@ class Aim(pygame.sprite.Sprite):
 
 class Bullet:
 	def __init__(self, display, x, y):
-		self.image = pygame.transform.scale(load_file("./images/bullet.png"), (percentPix(2, True), percentPix(2, False)))
+		self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), (percentPix(2, True), percentPix(2, False)))
 		self.x = x
 		self.y = y
 		self.b = y
@@ -38,9 +39,10 @@ class Bullet:
 		if self.coof > 0.1:
 			self.coof = 0.1
 
-		elif self.coof < -0.1:
-			self.coof = -0.1
 
+	def update(self):
+		self.x +=10
+		self.y = self.coof * self.x +self.b
 
 	def update(self):
 		self.x +=10
@@ -61,6 +63,7 @@ class Player:
 		self.speed = 10
 
 	def move(self, posx, posy):
+
 		"""
 		The move method to let the player move
 
@@ -81,6 +84,8 @@ class Player:
 		self.list_bullets.append(self.bullet(self.display, self.rect.x, self.rect.y))
 
 	def update(self):
+    #uncomment the line below for bullets debugging and issues only
+		#print(self.list_bullets)
 		"""
 		Update the bullet of
 		"""
