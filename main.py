@@ -1,6 +1,6 @@
 import pygame
 from classes import *
-from Functions import *
+from functions import *
 
 #ignite the window with title and size
 pygame.init()
@@ -10,28 +10,24 @@ pygame.display.set_caption("Space Invaders")
 Font = pygame.font.SysFont("monospace", 15)
 
 #load pics and resize it, load clock, load player and aim
-icon = load_file("pictures/SpaceInvaders_icon.jpg")
-background = load_file("pictures/Background.png")
-background = pygame.transform.scale(background, (infos.current_w, infos.current_h))
+icon = load_file("./pictures/spaceInvaders_icon.jpg")
+background = load_file("./pictures/Background.png")
+background = pygame.transform.scale(background, displaySize)
+
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
-aim = Aim()
-player = Player()
-allsprites = pygame.sprite.RenderPlain((player, aim))
-bullet_list = pygame.sprite.Group()
-enemy_list = pygame.sprite.Group()
+
+aim = Aim(display)
+player = Player(display)
 pygame.mouse.set_visible(False)
 PAUSE = 0
 RUNNING = 1
 state = RUNNING
-pauseSurf = pygame.Surface(pygame.display.get_surface().get_size())
-pauseSurf.fill(pygame.Color("black"))
-pauseSurf.set_alpha(0)
 
 #start the window loop
 loop = True
 while loop:
-	clock.tick(30)
+	clock.tick(60)
 	#the play part
 	if state == RUNNING:
 		window.blit(background, (0,0))
@@ -39,7 +35,6 @@ while loop:
 		allsprites.draw(window)
 		pygame.event.pump()
 		aim.focusAim()
-
 
 		keypress = pygame.key.get_pressed()
 		if keypress[pygame.K_z]:
@@ -55,9 +50,7 @@ while loop:
 			if event.type == pygame.QUIT:
 				loop = False
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				bullet = Bullet(player, 7)
-				allsprites.add(bullet)
-				bullet_list.add(bullet)
+				player.shoot()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE: state = PAUSE
 		bullet_list.update(player)
@@ -89,6 +82,7 @@ while loop:
 
 
 
+	player.update()
 	pygame.display.flip()
 
 pygame.quit()
