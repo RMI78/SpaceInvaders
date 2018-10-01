@@ -16,8 +16,7 @@ def Buttonify(Picture, coords, surface):
 	return (image, imagerect)
 
 #classe which represent the aim
-class Aim(pygame.sprite.Sprite):
-	#the init method
+class Aim:
 	def __init__(self, display):
 		self.display = display
 		self.image = pygame.transform.scale(load_file("./pictures/aim.png"), (percentPix(2, True), percentPix(2, False)))
@@ -29,7 +28,7 @@ class Aim(pygame.sprite.Sprite):
 
 class Bullet:
 	def __init__(self, display, x, y):
-		self.image = pygame.transform.scale(load_file("./images/bullet.png"), (percentPix(2, True), percentPix(2, False)))
+		self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), (percentPix(2, True), percentPix(2, False)))
 		self.x = x
 		self.y = y
 		self.b = y
@@ -50,7 +49,7 @@ class Bullet:
 class Player:
 	def __init__(self, display):
 		self.display = display
-		self.image = pygame.transform.scale(load_file("./images/spaceShip.png"), (percentPix(8, True), percentPix(10, False)))
+		self.image = pygame.transform.scale(load_file("./pictures/SpaceShip.png"), (percentPix(8, True), percentPix(10, False)))
 		self.rect = self.image.get_rect()
 		self.height = self.rect[-1]
 		self.width = self.rect[-2]

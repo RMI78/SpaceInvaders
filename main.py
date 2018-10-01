@@ -10,15 +10,17 @@ pygame.display.set_caption("Space Invaders")
 Font = pygame.font.SysFont("monospace", 15)
 
 #load pics and resize it, load clock, load player and aim
-icon = load_file("./pictures/spaceInvaders_icon.jpg")
+icon = load_file("./pictures/SpaceInvaders_icon.jpg")
 background = load_file("./pictures/Background.png")
-background = pygame.transform.scale(background, displaySize)
+background = pygame.transform.scale(background, (infos.current_w, infos.current_h))
+pauseSurf = pygame.Surface((infos.current_w, infos.current_h))
+pauseSurf.fill((0,0,0))
 
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
 
-aim = Aim(display)
-player = Player(display)
+aim = Aim(background)
+player = Player(background)
 pygame.mouse.set_visible(False)
 PAUSE = 0
 RUNNING = 1
@@ -31,8 +33,6 @@ while loop:
 	#the play part
 	if state == RUNNING:
 		window.blit(background, (0,0))
-		window.blit(pauseSurf, (0,0))
-		allsprites.draw(window)
 		pygame.event.pump()
 		aim.focusAim()
 
@@ -53,7 +53,7 @@ while loop:
 				player.shoot()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE: state = PAUSE
-		bullet_list.update(player)
+		player.update()
 
 	#the pause part
 	if state == PAUSE:
@@ -80,9 +80,6 @@ while loop:
 			if event.type == pygame.QUIT:
 				loop = False
 
-
-
-	player.update()
 	pygame.display.flip()
 
 pygame.quit()
