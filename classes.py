@@ -27,11 +27,11 @@ class Aim:
 
 
 class Bullet:
-	def __init__(self, display, x, y):
+	def __init__(self, display, x, y, height):
 		self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), (percentPix(2, True), percentPix(2, False)))
 		self.x = x
 		self.y = y
-		self.b = y
+		self.b = y+height/2
 		self.xMouse, self.yMouse = pygame.mouse.get_pos()
 		self.coof = (self.yMouse-self.y)/(self.xMouse-self.x)
 		if self.coof > 0.1:
@@ -49,7 +49,7 @@ class Bullet:
 class Player:
 	def __init__(self, display):
 		self.display = display
-		self.image = pygame.transform.scale(load_file("./pictures/SpaceShip.png"), (percentPix(8, True), percentPix(10, False)))
+		self.image = pygame.transform.scale(load_file("./pictures/spaceShip.png"), (percentPix(8, True), percentPix(10, False)))
 		self.rect = self.image.get_rect()
 		self.height = self.rect[-1]
 		self.width = self.rect[-2]
@@ -77,12 +77,9 @@ class Player:
 			self.rect.x -= self.speed
 
 	def shoot(self):
-		self.list_bullets.append(self.bullet(self.display, self.rect.x, self.rect.y))
+		self.list_bullets.append(self.bullet(self.display, self.rect.x, self.rect.y, self.height))
 
 	def update(self):
-		"""
-		Update the bullet of
-		"""
 		for bullet in self.list_bullets:
 			bullet.update()
 			if bullet.x > pygame.display.get_surface().get_size()[0] or bullet.y > pygame.display.get_surface().get_size()[-1]:
@@ -91,7 +88,7 @@ class Player:
 			else:
 				self.display.blit(bullet.image, (bullet.x, bullet.y))
 
-		self.display.blit(self.image, (self.rect.x, self.rect.y-self.height/2))
+		self.display.blit(self.image, (self.rect.x, self.rect.y))
 
 
 
