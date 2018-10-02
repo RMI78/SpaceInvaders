@@ -13,7 +13,9 @@ Font = pygame.font.SysFont("monospace", 15)
 #load pics and resize it, load clock, load player and aim
 icon = load_file("./pictures/spaceInvaders_icon.jpg")
 background = load_file("./pictures/background.png")
-background = pygame.transform.scale(background, displaySize)
+background = pygame.transform.scale(background, (infos.current_w, infos.current_h))
+pauseSurf = pygame.Surface((infos.current_w, infos.current_h))
+pauseSurf.fill((0,0,0))
 
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
@@ -83,9 +85,6 @@ while loop:
 			if event.type == pygame.QUIT:
 				loop = False
 
-
-
-	player.update()
 	pygame.display.flip()
 
 pygame.quit()
