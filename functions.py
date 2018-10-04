@@ -1,6 +1,6 @@
 import pygame
 import os
-
+import operator
 
 #function in order to know what is and how load the file taken in parameter
 def load_file(file):
@@ -47,3 +47,25 @@ def mouseAngle(objrect):
 	if distanceX != 0 or distanceY != 0:
 		finalAngle = 45 - math.degrees(math.atan(distanceX / distanceY))
 		return -1*finalAngle
+
+#functions which create buttons
+#to use, proceed this way:
+#if event.type == MOUSEBUTTONDOWN and event.button == 1:
+#	mouse = pygame.mouse.get_pos
+#	if Image[1].colliderect(mouse)
+def Buttonify(image, coords, surface, text='', font=None):
+	#load, scale, place and render the button
+	image = pygame.transform.scale(image, (percentPix(20, True), percentPix(15, False)))
+	imagerect = image.get_rect()
+	imagerect.center = coords
+	surface.blit(image, imagerect)
+
+	#load, place and render the string
+	if font:
+		buttonStr = font.render(text, True, [0,0,0])
+		fontrect = buttonStr.get_rect()
+		fontrect.center = imagerect.center
+		surface.blit(buttonStr,fontrect)
+
+
+	return (image, imagerect)

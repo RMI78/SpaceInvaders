@@ -13,6 +13,7 @@ Font = pygame.font.SysFont("monospace", 15)
 #load pics and resize it, load clock, load player and aim
 icon = load_file("./pictures/spaceInvaders_icon.jpg")
 background = load_file("./pictures/background.png")
+defaultButton = load_file("./pictures/graySquareButton.png")
 background = pygame.transform.scale(background, (infos.current_w, infos.current_h))
 pauseSurf = pygame.Surface((infos.current_w, infos.current_h))
 pauseSurf.fill((0,0,0))
@@ -38,7 +39,6 @@ while loop:
 	#the play part
 	if state == RUNNING:
 		window.blit(background, (0,0))
-		window.blit(pauseSurf, (0,0))
 		pygame.event.pump()
 		aim.focusAim()
 
@@ -67,19 +67,25 @@ while loop:
 		pauseLoop = True
 		PauseFont = Font.render("PAUSE", True,[255, 255, 255])
 		window.blit(pauseSurf, (0,0))
-		window.blit(PauseFont, (percentPix(47, True),percentPix(35, False)))
-		image = Buttonify("pictures/graySquareButton.png", (percentPix(60, True), percentPix(45, False)), pauseSurf)
+		window.blit(PauseFont, (percentPix(48, True),percentPix(25, False)))
+		backToGameButton = Buttonify(defaultButton, (percentPix(50, True), percentPix(35, False)), pauseSurf, "Back to the game", Font)
+		settingButton = Buttonify(defaultButton, (percentPix(50, True), percentPix(50, False)), pauseSurf,"Settings", Font)
+		leaveButton = Buttonify(defaultButton, (percentPix(50, True), percentPix(65, False)), pauseSurf, "Leave the Game", Font)
 		pygame.mouse.set_visible(True)
 		for eventPause in pygame.event.get():
 			if eventPause.type == pygame.QUIT:
 				state = RUNNING
 				loop = False
 			if eventPause.type == pygame.MOUSEBUTTONDOWN and eventPause.button == 1:
-				if image[-1].collidepoint(pygame.mouse.get_pos()):
-					pass #TO DO: Resume the game ?!
+				if backToGameButton[-1].collidepoint(pygame.mouse.get_pos()):
+					pygame.mouse.set_visible(False)
+					state = RUNNING
+				if settingButton[-1].collidepoint(pygame.mouse.get_pos()):
+					pass #definition to print the settings ??
+				if leaveButton[-1].collidepoint(pygame.mouse.get_pos()):
+					loop = False
 			if eventPause.type == pygame.KEYDOWN:
 				if eventPause.key == pygame.K_ESCAPE:
-					pauseSurf.set_alpha(0)
 					pygame.mouse.set_visible(False)
 					state = RUNNING
 			if event.type == pygame.QUIT:

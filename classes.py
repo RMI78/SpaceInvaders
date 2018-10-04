@@ -2,18 +2,7 @@ import pygame
 from functions import *
 import math
 
-#classe which create buttons
-#to use, proceed this way:
-#if event.type == MOUSEBUTTONDOWN and event.button == 1:
-#	mouse = pygame.mouse.get_pos
-#	if Image[1].colliderect(mouse)
-def Buttonify(Picture, coords, surface):
-	image = load_file(Picture)
-	image = pygame.transform.scale(image, (percentPix(20, True), percentPix(15, False)))
-	imagerect = image.get_rect()
-	imagerect.topright = coords
-	surface.blit(image, imagerect)
-	return (image, imagerect)
+
 
 #classe which represent the aim
 class Aim:
