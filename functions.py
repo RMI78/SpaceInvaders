@@ -12,7 +12,7 @@ def load_file(file):
 				raise SystemExit(message)
 		return image
 
-	elif file[-4::] in (".mp3", ".wav"):
+	elif file[-4::] in (".mp3", ".wav", ".flac"):
 		class NoneSound:
 			def play(self): pass
 		if not pygame.mixer:
@@ -28,15 +28,12 @@ def load_file(file):
 		print("Your file is not supported.")
 		return False
 
-#get the number of pixels in function of the screen resolution through a percentage parameter
-#the second parameter: True for the width and False for the Height
-def percentPix(percent, widthOrHeight):
+#get the pixels coords in function of the screen resolution through a percentage tuple parameter
+def percentPix(percent):
 	wRes, hRes = pygame.display.get_surface().get_size()
-	if percent > 0 and percent <= 100:
-		if widthOrHeight == True :
-			return round((percent*wRes)/100)
-		if widthOrHeight == False :
-			return round((percent*hRes)/100)
+	if percent[0] > 0 and percent[0] <= 100:
+		if percent[1] > 0 and percent[1] <= 100:
+			return (round((percent[0]*wRes)/100), round((percent[1]*hRes)/100))
 	else : print("wrong percentage using precentPix function")
 
 #get the angle beetween the mouse and a sprite in degrees
@@ -55,7 +52,7 @@ def mouseAngle(objrect):
 #	if Image[1].colliderect(mouse)
 def Buttonify(image, coords, surface, text='', font=None):
 	#load, scale, place and render the button
-	image = pygame.transform.scale(image, (percentPix(20, True), percentPix(15, False)))
+	image = pygame.transform.scale(image, (percentPix((20,15))))
 	imagerect = image.get_rect()
 	imagerect.center = coords
 	surface.blit(image, imagerect)

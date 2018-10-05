@@ -8,16 +8,16 @@ import math
 class Aim:
 	def __init__(self, display):
 		self.display = display
-		self.image = pygame.transform.scale(load_file("./pictures/aim.png"), (percentPix(2, True), percentPix(2, False)))
+		self.image = pygame.transform.scale(load_file("./pictures/aim.png"), percentPix((2,2)))
 
 	#the update method for the position
 	def focusAim(self):
 		self.display.blit(self.image, pygame.mouse.get_pos())
 
-
+#class which represent the bullet
 class Bullet:
 	def __init__(self, display, x, y, height):
-		self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), (percentPix(2, True), percentPix(2, False)))
+		self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), percentPix((2,2)))
 		self.x = x
 		self.y = y
 		self.b = y+height/2
@@ -34,11 +34,11 @@ class Bullet:
 		self.x +=10
 		self.y = self.coof * self.x +self.b
 
-
+#class which represent the current player
 class Player:
 	def __init__(self, display):
 		self.display = display
-		self.image = pygame.transform.scale(load_file("./pictures/spaceShip.png"), (percentPix(8, True), percentPix(10, False)))
+		self.image = pygame.transform.scale(load_file("./pictures/spaceShip.png"), percentPix((8,10)))
 		self.rect = self.image.get_rect()
 		self.height = self.rect[-1]
 		self.width = self.rect[-2]
