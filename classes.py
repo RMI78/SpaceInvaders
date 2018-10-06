@@ -22,13 +22,12 @@ class Bullet:
 		self.y = y
 		self.b = y+height/2
 		self.xMouse, self.yMouse = pygame.mouse.get_pos()
-		self.coof = (self.yMouse-self.y)/(self.xMouse-self.x)
-		if self.coof > 0.1:
-			self.coof = 0.1
+		self.coof = ((self.yMouse-height/2)-self.y)/(self.xMouse-self.x)
+		if self.coof < -0.19:
+			self.coof = -0.19
 
-		elif self.coof < -0.1:
-			self.coof = -0.1
-
+		elif self.coof > 0.19:
+			self.coof = 0.19
 
 	def update(self):
 		self.x +=10
