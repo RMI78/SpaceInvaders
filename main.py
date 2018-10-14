@@ -13,7 +13,6 @@ Font = pygame.font.SysFont("monospace", 35, True)
 #load pics and resize it, load clock, load player and aim
 icon = load_file("./pictures/spaceInvaders_icon.jpg")
 background = load_file("./pictures/background.png")
-defaultButton = load_file("./pictures/graySquareButton.png")
 background = pygame.transform.scale(background, (infos.current_w, infos.current_h))
 MenuSurf = pygame.transform.scale(background, (infos.current_w, infos.current_h))
 pauseSurf = pygame.Surface(pygame.display.get_surface().get_size())
@@ -30,6 +29,7 @@ PAUSE = 0
 RUNNING = 1
 MENU = 2
 state = MENU
+INIT = False
 
 #start the window loop
 loop = True
@@ -41,21 +41,28 @@ while loop:
 		MenuFont = Font.render("Space Invaders", True, [255,255,255])
 		window.blit(MenuSurf, (0,0))
 		window.blit(MenuFont, percentPix((42, 15)))
-		menuPlaySoloButton = Buttonify(defaultButton, percentPix((50,30)), MenuSurf, "Solo", Font)
-		menuPlayMultiButton = Buttonify(defaultButton, percentPix((50,45)), MenuSurf, "Coop", Font)
-		menuSettingButton =  Buttonify(defaultButton, percentPix((50,60)), MenuSurf,"Settings", Font)
-		menuLeaveButton = Buttonify(defaultButton, percentPix((50,75)), MenuSurf, "Leave the Game", Font)
+		#menuPlaySoloButton = Buttonify(defaultButton, percentPix((50,30)), MenuSurf, "Solo", Font)
+		menuPlaySoloButton = Button(percentPix((50, 30)), MenuSurf, percentPix((20,15)), "Solo", Font, "./pictures/graySquareButton.png")
+		menuPlayMultiButton = Button(percentPix((50,45)), MenuSurf, percentPix((20,15)), "Coop", Font, "./pictures/graySquareButton.png")
+		menuSettingButton =  Button(percentPix((50,60)), MenuSurf, percentPix((20,15)), "Settings", Font, "./pictures/graySquareButton.png")
+		menuLeaveButton = Button(percentPix((50,75)), MenuSurf, percentPix((20,15)),"Leave the Game", Font, "./pictures/graySquareButton.png")
+
+		#things that need to be looped
+		menuPlaySoloButton.display()
+		menuPlayMultiButton.display()
+		menuSettingButton.display()
+		menuLeaveButton.display()
 		for eventMenu in pygame.event.get():
 			if eventMenu.type == pygame.QUIT:
 				state = RUNNING
 				loop = False
 			if eventMenu.type == pygame.MOUSEBUTTONDOWN and eventMenu.button == 1:
-				if menuPlaySoloButton[-1].collidepoint(pygame.mouse.get_pos()):
+				if menuPlaySoloButton.imageRect.collidepoint(pygame.mouse.get_pos()):
 					pygame.mouse.set_visible(False)
 					state = RUNNING
-				if menuSettingButton[-1].collidepoint(pygame.mouse.get_pos()):
-					pass #definition to print the settings ??
-				if menuLeaveButton[-1].collidepoint(pygame.mouse.get_pos()):
+				if menuSettingButton.imageRect.collidepoint(pygame.mouse.get_pos()):
+					pass #class to manage the settings ??
+				if menuLeaveButton.imageRect.collidepoint(pygame.mouse.get_pos()):
 					loop = False
 			if eventMenu.type == pygame.QUIT:
 				loop = False
@@ -93,21 +100,24 @@ while loop:
 		PauseFont = Font.render("PAUSE", True,[255, 255, 255])
 		window.blit(pauseSurf, (0,0))
 		window.blit(PauseFont, percentPix((47,25)))
-		backToGameButton = Buttonify(defaultButton, percentPix((50,35)), pauseSurf, "Back to the game", Font)
-		pauseSettingButton = Buttonify(defaultButton, percentPix((50,50)), pauseSurf,"Settings", Font)
-		pauseLeaveButton = Buttonify(defaultButton, percentPix((50,65)), pauseSurf, "Leave the Game", Font)
+		backToGameButton = Button(percentPix((50,35)), pauseSurf, percentPix((20,15)), "Back to game", Font, "./pictures/graySquareButton.png")
+		pauseSettingButton = Button(percentPix((50,50)), pauseSurf, percentPix((20,15)),"Settings", Font, "./pictures/graySquareButton.png")
+		pauseLeaveButton = Button(percentPix((50,65)), pauseSurf, percentPix((20,15)), "Leave the Game", Font, "./pictures/graySquareButton.png")
+		backToGameButton.display()
+		pauseSettingButton.display()
+		pauseLeaveButton.display()
 		pygame.mouse.set_visible(True)
 		for eventPause in pygame.event.get():
 			if eventPause.type == pygame.QUIT:
 				state = RUNNING
 				loop = False
 			if eventPause.type == pygame.MOUSEBUTTONDOWN and eventPause.button == 1:
-				if backToGameButton[-1].collidepoint(pygame.mouse.get_pos()):
+				if backToGameButton.imageRect.collidepoint(pygame.mouse.get_pos()):
 					pygame.mouse.set_visible(False)
 					state = RUNNING
-				if pauseSettingButton[-1].collidepoint(pygame.mouse.get_pos()):
+				if pauseSettingButton.imageRect.collidepoint(pygame.mouse.get_pos()):
 					pass #definition to print the settings ??
-				if pauseLeaveButton[-1].collidepoint(pygame.mouse.get_pos()):
+				if pauseLeaveButton.imageRect.collidepoint(pygame.mouse.get_pos()):
 					loop = False
 			if eventPause.type == pygame.KEYDOWN:
 				if eventPause.key == pygame.K_ESCAPE:
