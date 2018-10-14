@@ -33,7 +33,7 @@ def percentPix(percent):
 	wRes, hRes = pygame.display.get_surface().get_size()
 	if percent[0] > 0 and percent[0] <= 100:
 		if percent[1] > 0 and percent[1] <= 100:
-			return (round((percent[0]*wRes)/100), round((percent[1]*hRes)/100))
+			return (int(round((percent[0]*wRes)/100)), int(round((percent[1]*hRes)/100)))
 	else : print("wrong percentage using precentPix function")
 
 #get the angle beetween the mouse and a sprite in degrees
@@ -44,25 +44,3 @@ def mouseAngle(objrect):
 	if distanceX != 0 or distanceY != 0:
 		finalAngle = 45 - math.degrees(math.atan(distanceX / distanceY))
 		return -1*finalAngle
-
-#functions which create buttons
-#to use, proceed this way:
-#if event.type == MOUSEBUTTONDOWN and event.button == 1:
-#	mouse = pygame.mouse.get_pos
-#	if Image[1].colliderect(mouse)
-def Buttonify(image, coords, surface, text='', font=None):
-	#load, scale, place and render the button
-	image = pygame.transform.scale(image, (percentPix((20,15))))
-	imagerect = image.get_rect()
-	imagerect.center = coords
-	surface.blit(image, imagerect)
-
-	#load, place and render the string
-	if font:
-		buttonStr = font.render(text, True, [0,0,0])
-		fontrect = buttonStr.get_rect()
-		fontrect.center = imagerect.center
-		surface.blit(buttonStr,fontrect)
-
-
-	return (image, imagerect)
