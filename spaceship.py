@@ -34,6 +34,17 @@ class SpaceShip:
         self.alive = True
         self.speed = speed
 
+    def update(self):
+        for bullet in self.list_bullets:
+            bullet.update()
+            if not self.display.get_rect().colliderect(bullet.rect):
+                del(self.list_bullets[self.list_bullets.index(bullet)])
+
+            else:
+                self.display.blit(bullet.image, (bullet.rect.x, bullet.rect.y))
+
+        self.display.blit(self.image, (self.rect.x, self.rect.y))
+
 
 class Player(SpaceShip):
 
@@ -56,18 +67,6 @@ class Player(SpaceShip):
 
 	def shoot(self):
 		self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height))
-
-	def update(self):
-		for bullet in self.list_bullets:
-			bullet.update()
-			if not self.display.get_rect().colliderect(bullet.rect):
-				del(self.list_bullets[self.list_bullets.index(bullet)])
-
-			else:
-				self.display.blit(bullet.image, (bullet.rect.x, bullet.rect.y))
-
-		self.display.blit(self.image, (self.rect.x, self.rect.y))
-
 
 
 class Enemy(SpaceShip):
@@ -95,14 +94,3 @@ class Enemy(SpaceShip):
 	def shoot(self, player):
 		if random.choice([True, False]):
 			self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, 10, False, player.rect.x, player.rect.y+player.height/2))
-
-	def update(self):
-		for bullet in self.list_bullets:
-			bullet.update()
-			if not self.display.get_rect().colliderect(bullet.rect):
-				del(self.list_bullets[self.list_bullets.index(bullet)])
-
-			else:
-				self.display.blit(bullet.image, (bullet.rect.x, bullet.rect.y))
-
-		self.display.blit(self.image, (self.rect.x, self.rect.y))
