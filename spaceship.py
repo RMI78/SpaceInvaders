@@ -3,47 +3,59 @@ from functions import *
 import random
 
 class Bullet:
-    def __init__(self, x, y, height, speed=20, type=True, xTarget=None, yTarget=None):
-        self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), percentPix((2,2)))
-        self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = (x, y)
-        self.speed = speed
-        if type:
-            self.xTarget, self.yTarget = pygame.mouse.get_pos()
-        else:
-            self.xTarget, self.yTarget = (xTarget, yTarget)
-            self.speed = -self.speed
+	def __init__(self, x, y, height, speed=20, type=True, xTarget=None, yTarget=None):
+		self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), percentPix((2,2)))
+		self.rect = self.image.get_rect()
+		self.rect.x, self.rect.y = (x, y)
+		self.speed = speed
+		if type:
+			self.xTarget, self.yTarget = pygame.mouse.get_pos()
+		else:
+			self.xTarget, self.yTarget = (xTarget, yTarget)
+			self.speed = -self.speed
 
-        self.coof = ((self.yTarget-height/2)-self.rect.y)/(self.xTarget-self.rect.x)
-        self.b = self.rect.y - self.coof*self.rect.x+height/2
+		self.coof = ((self.yTarget-height/2)-self.rect.y)/(self.xTarget-self.rect.x)
+		self.b = self.rect.y - self.coof*self.rect.x+height/2
 
-    def update(self):
-        self.rect.x +=self.speed
-        self.rect.y = self.coof * self.rect.x +self.b
+	def update(self):
+		self.rect.x +=self.speed
+		self.rect.y = self.coof * self.rect.x +self.b
 
 class SpaceShip:
-    def __init__(self, display, x, y, image="./pictures/spaceShip.png", speed=10):
-        self.display = display
-        self.image = pygame.transform.scale(load_file(image), percentPix((8,10)))
-        self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = (x, y)
-        self.height, self.width= (self.rect[-1], self.rect[-2])
-        self.widthDisplay, self.heightDisplay = pygame.display.get_surface().get_size()
-        self.bullet = Bullet
-        self.list_bullets = []
-        self.alive = True
-        self.speed = speed
+	def __init__(self, display, x, y, image, speed=10):
+		self.display = display
+		self.strForImage2 = image[:len(image)-4] + '2' + image[-4:]
+		print(self.strForImage2)
+		self.image = pygame.transform.scale(load_file(image), percentPix((8,10)))
+		self.image2 = pygame.transform.scale(load_file(self.strForImage2), percentPix((9,10)))
+		self.currentImage = self.image
+		self.rect = self.image.get_rect()
+		self.rect.x, self.rect.y = (x, y)
+		self.height, self.width= (self.rect[-1], self.rect[-2])
+		self.widthDisplay, self.heightDisplay = pygame.display.get_surface().get_size()
+		self.bullet = Bullet
+		self.list_bullets = []
+		self.alive = True
+		self.speed = speed
+		self.incrementForAnimations=0
 
-    def update(self):
-        for bullet in self.list_bullets:
-            bullet.update()
-            if not self.display.get_rect().colliderect(bullet.rect):
-                del(self.list_bullets[self.list_bullets.index(bullet)])
+	def update(self):
+		self.incrementForAnimations = self.incrementForAnimations + 1
+		if self.incrementForAnimations == 60 and self.currentImage == self.image:
+			self.currentImage = self.image2
+			self.incrementForAnimations = 0
+		elif self.incrementForAnimations == 60 and self.currentImage == self.image2:
+			self.currentImage = self.image
+			self.incrementForAnimations = 0
+		for bullet in self.list_bullets:
+			bullet.update()
+			if not self.display.get_rect().colliderect(bullet.rect):
+				del(self.list_bullets[self.list_bullets.index(bullet)])
 
-            else:
-                self.display.blit(bullet.image, (bullet.rect.x, bullet.rect.y))
+			else:
+				self.display.blit(bullet.image, (bullet.rect.x, bullet.rect.y))
 
-        self.display.blit(self.image, (self.rect.x, self.rect.y))
+		self.display.blit(self.currentImage, (self.rect.x, self.rect.y))
 
 
 class Player(SpaceShip):
@@ -66,7 +78,8 @@ class Player(SpaceShip):
 			self.rect.x -= self.speed
 
 	def shoot(self):
-		self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height))
+		if mouseAngle(self) > -35 and mouseAngle(self) < 35:
+			self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height))
 
 
 class Enemy(SpaceShip):

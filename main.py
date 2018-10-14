@@ -25,7 +25,7 @@ clock = pygame.time.Clock()
 pygame.event.pump()
 
 aim = Aim(window)
-player = Player(window, 0, 0)
+player = Player(window, 0, 0, "./pictures/spaceShip.png")
 enemy = Enemy(window, 1700, 540, "./pictures/enemy.png", 5)
 
 PAUSE = 0

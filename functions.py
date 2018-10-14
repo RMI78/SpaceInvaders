@@ -1,6 +1,7 @@
 import pygame
 import os
 import operator
+import math
 
 #function in order to know what is and how load the file taken in parameter
 def load_file(file):
@@ -36,11 +37,11 @@ def percentPix(percent):
 			return (int(round((percent[0]*wRes)/100)), int(round((percent[1]*hRes)/100)))
 	else : print("wrong percentage using precentPix function")
 
-#get the angle beetween the mouse and a sprite in degrees
+#get the angle beetween the mouse and a rect object in degrees
 def mouseAngle(objrect):
 	mouseX, mouseY = pygame.mouse.get_pos()
 	distanceY = mouseY - objrect.rect.y
 	distanceX = mouseX - objrect.rect.x
 	if distanceX != 0 or distanceY != 0:
-		finalAngle = 45 - math.degrees(math.atan(distanceX / distanceY))
-		return -1*finalAngle
+		return math.degrees(math.atan(distanceY/distanceX))
+	else: pass
