@@ -22,10 +22,9 @@ class Bullet:
 		self.rect.y = self.coof * self.rect.x +self.b
 
 class SpaceShip:
-	def __init__(self, display, x, y, image, speed=10):
+	def __init__(self, display, x, y, image, frequency=20, speed=10):
 		self.display = display
 		self.strForImage2 = image[:len(image)-4] + '2' + image[-4:]
-		print(self.strForImage2)
 		self.image = pygame.transform.scale(load_file(image), percentPix((8,10)))
 		self.image2 = pygame.transform.scale(load_file(self.strForImage2), percentPix((9,10)))
 		self.currentImage = self.image
@@ -37,16 +36,19 @@ class SpaceShip:
 		self.list_bullets = []
 		self.alive = True
 		self.speed = speed
-		self.incrementForAnimations=0
+		self.incrementFor1Second = 0
+		self.frequency = frequency
+		self.lastShots = self.frequency
 
 	def update(self):
-		self.incrementForAnimations = self.incrementForAnimations + 1
-		if self.incrementForAnimations == 60 and self.currentImage == self.image:
-			self.currentImage = self.image2
-			self.incrementForAnimations = 0
-		elif self.incrementForAnimations == 60 and self.currentImage == self.image2:
-			self.currentImage = self.image
-			self.incrementForAnimations = 0
+		self.incrementFor1Second = self.incrementFor1Second + 1
+		if self.incrementFor1Second == 60:
+			if self.currentImage == self.image:
+				self.currentImage = self.image2
+			elif self.currentImage == self.image2:
+				self.currentImage = self.image
+			self.incrementFor1Second = 0
+			self.lastShots = self.frequency
 		for bullet in self.list_bullets:
 			bullet.update()
 			if not self.display.get_rect().colliderect(bullet.rect):
@@ -78,8 +80,10 @@ class Player(SpaceShip):
 			self.rect.x -= self.speed
 
 	def shoot(self):
-		if mouseAngle(self) > -35 and mouseAngle(self) < 35:
-			self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height))
+		if self.lastShots > 0:
+			if mouseAngle(self) > -35 and mouseAngle(self) < 35:
+				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height))
+				self.lastShots = self.lastShots-1
 
 
 class Enemy(SpaceShip):
@@ -105,5 +109,8 @@ class Enemy(SpaceShip):
 			self.rect.x -= self.speed
 
 	def shoot(self, player):
-		if random.choice([True, False]):
-			self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, 10, False, player.rect.x, player.rect.y+player.height/2))
+		if self.lastShots > 0:
+			if random.randint(0,800)<50:
+				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, 10, False, player.rect.x, player.rect.y+player.height/2))
+				self.lastShots = self.lastShots-1
+		else: pass
