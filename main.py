@@ -1,6 +1,7 @@
 import pygame
 from classes import *
 from functions import *
+from spaceship import *
 
 #ignite the window with title, size and icon
 pygame.init()
@@ -24,7 +25,9 @@ clock = pygame.time.Clock()
 pygame.event.pump()
 
 aim = Aim(window)
-player = Player(window)
+player = Player(window, 0, 0)
+enemy = Enemy(window, 1700, 540, "./pictures/enemy.png", 5)
+
 PAUSE = 0
 RUNNING = 1
 MENU = 2
@@ -92,6 +95,9 @@ while loop:
 				player.shoot()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE: state = PAUSE
+		enemy.move()
+		enemy.shoot(player)
+		enemy.update()
 		player.update()
 
 	#the pause part
