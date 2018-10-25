@@ -170,7 +170,7 @@ class Manager():
 						if backToMenuButton.isCliked():
 							return self.MENU
 						if pauseSettingButton.isCliked():
-							pass #definition to print the settings ??
+							self.settings()
 						if pauseLeaveButton.isCliked():
 							return self.LEAVE
 					if eventPause.type == pygame.KEYDOWN:
@@ -216,11 +216,12 @@ class Manager():
 								self.screen = "windowed"
 							if saveButton.isCliked():
 								self.playername = playerName.get_text()
+								self.stop()
 							if backToMenuButton.isCliked():
 								return self.MENU
 					pygame.display.flip()
 
-	def stop(self):
+	def writeConfig(self):
 		"""
 		The close method to write the current
 		config and close the config file
