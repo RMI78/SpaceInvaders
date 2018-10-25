@@ -30,8 +30,10 @@ class SpaceShip:
 	def __init__(self, display, x, y, direction, image, frequency=20):
 		self.display = display
 		self.strForImage2 = image[:len(image)-4] + '2' + image[-4:]
-		self.image = pygame.transform.scale(load_file(image), percentPix((8,10)))
+		self.strForImage3 = image[:len(image)-4] + '3' + image[-4:]
+		self.image = pygame.transform.scale(load_file(image), percentPix((9,10)))
 		self.image2 = pygame.transform.scale(load_file(self.strForImage2), percentPix((9,10)))
+		self.image3 = pygame.transform.scale(load_file(self.strForImage3), percentPix((9,10)))
 		if not direction:
 			self.image = pygame.transform.flip(self.image, True, False)
 			self.image2 = pygame.transform.flip(self.image2, True, False)
@@ -58,14 +60,16 @@ class SpaceShip:
 		else: pass
 
 	def update(self):
-		self.incrementFor1Second = self.incrementFor1Second + 1
-		if self.incrementFor1Second == 60:
-			if self.currentImage == self.image:
-				self.currentImage = self.image2
-			elif self.currentImage == self.image2:
-				self.currentImage = self.image
-			self.incrementFor1Second = 0
+		self.incrementFor1Second += 1
+		if self.incrementFor1Second == 1:
+			self.currentImage = self.image
+		elif self.incrementFor1Second == 30:
+			self.currentImage = self.image2
+		elif self.incrementFor1Second == 60:
+			self.currentImage = self.image3
 			self.lastShots = self.frequency
+			self.incrementFor1Second = 0
+
 		for bullet in self.list_bullets:
 			bullet.update()
 			if not self.display.get_rect().colliderect(bullet.rect):
