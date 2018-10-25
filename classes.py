@@ -2,7 +2,8 @@ import pygame
 from functions import *
 import math
 import random
-
+from spaceship import *
+from widgets import *
 
 class Aim:
 	def __init__(self, display):
@@ -18,68 +19,215 @@ arguments: Coords: tuple, Surface: Surface object, Size: tuple, Text: string, Fo
 to use, proceed this way:
 if event.type == MOUSEBUTTONDOWN and event.button == 1:
 	mouse = pygame.mouse.get_pos
-	if Button.imageRect.colliderect(mouse)"""
-class Button:
-	def __init__(self, Coords, Surface, Size, Text=None, Font=None, Image=None):
-		self.coords = Coords
-		self.surface = Surface
-		self.size = Size
-		self.surface = Surface
-		if Text:
-			self.text = Text
-		if Image:
-			#try to use the image to create and blit a button with itself
-			try:
-				self.image = load_file(Image)
-				self.image = pygame.transform.scale(self.image, (Size))
-				self.imageRect = self.image.get_rect()
-				self.imageRect.center = self.coords
-			except:
-				Image=None
-		if Image == None :
-			#create and blit a basic button if any image is loaded or if the loading of the image fail
-			self.reducedSize = tuple(map(operator.sub, self.size, percentPix((1,1))))
-			self.image = pygame.Surface(self.size)
-			self.image2 = pygame.Surface(self.reducedSize)
-			self.imageRect = self.image.get_rect()
-			self.image2Rect = self.image.get_rect()
-			self.image.fill([255, 255, 255])
-			self.image2.fill([0, 0, 0])
-			self.imageRect.center = self.coords
-			self.image2Rect.center = tuple(map(operator.add, self.coords, percentPix((0.5, 0.5))))
-
-		if Font:
-			if Image:
-				self.font = Font.render(self.text, True, [0,0,0])
-			if Image == None:
-				self.font = Font.render(self.text, True, [255, 255, 255])
-			self.fontRect = self.font.get_rect()
-			self.fontRect.center = self.imageRect.center
-
-		self.area = tuple(map(operator.sub, self.imageRect.bottomright, self.imageRect.topleft))
+	if Button.imageRect.colliderect(mouse)
+	"""
 
 
-	def display(self):
-		self.surface.blit(self.image, self.imageRect)
+
+
+class Manager():
+	def __init__(self, confFile):
+		#opening and reading or creating the conf file
+		self.confFile = confFile
 		try:
-			self.surface.blit(self.image2, self.image2Rect)
-		except:pass
-		self.surface.blit(self.font, self.fontRect)
+			self.config = open(self.confFile, 'r')
+			self.configList = config.readlines()
+			self.screen = configList[0]
+			self.playername = configList[1]
+		except:
+			self.screen = "windowed"
+			self.playername = "player"
+			self.config = open(self.confFile, 'w')
+			self.config.write(self.screen + "\n" + self.playername + "\n")
 
-	def move(self, coords):
-		self.imageRect.move(coords)
-		self.fontRect.move(coords)
-		self.display()
+		#load the screen
+		self.displayInfos = pygame.display.Info()
+		self.displaySize = (self.displayInfos.current_w, self.displayInfos.current_h)
+		if self.screen == "windowed":
+			self.window = pygame.display.set_mode(self.displaySize, pygame.RESIZABLE)
+		if self.screen == "fullscreen":
+			self.window = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+		pygame.display.set_caption("Space Invaders")
+		self.Font = pygame.font.SysFont("monospace", 35, True)
+
+		#load pics and resize it, load clock
+		self.icon = load_file("./pictures/spaceInvaders_icon.jpg")
+		self.gameSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
+		self.MenuSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
+		self.SettingSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
+		self.pauseSurf = pygame.Surface(pygame.display.get_surface().get_size())
+		self.pauseSurf.fill(pygame.Color("black"))
+		self.pauseSurf.set_alpha(200)
+
+		pygame.display.set_icon(self.icon)
+		self.clock = pygame.time.Clock()
+
+		#set the flags
+		self.LEAVE = 0
+		self.SOLO = 1
+		self.MENU = 2
+		self.SETTINGS = 3
+		self.MULTI = 4
 
 
+	def menu(self):
+		#things that need to be ignited once
+		MenuFont = self.Font.render("Space Invaders", True, [255,255,255])
+		menuPlaySoloButton = Button(percentPix((50, 30)), self.MenuSurf, percentPix((20,15)), "Solo", self.Font, "./pictures/graySquareButton.png")
+		menuPlayMultiButton = Button(percentPix((50,47)), self.MenuSurf, percentPix((20,15)), "Multi", self.Font, "./pictures/graySquareButton.png")
+		menuSettingButton =  Button(percentPix((50,64)), self.MenuSurf, percentPix((20,15)), "Settings", self.Font, "./pictures/graySquareButton.png")
+		menuLeaveButton = Button(percentPix((50,81)), self.MenuSurf, percentPix((20,15)),"Leave the Game", self.Font, "./pictures/graySquareButton.png")
+		while True:
+			#in this loop place things that need to be looped in the menu
+			self.clock.tick(60)
+			pygame.mouse.set_visible(True)
+			self.window.blit(self.MenuSurf, (0,0))
+			self.window.blit(MenuFont, percentPix((42, 15)))
+			menuPlaySoloButton.display()
+			menuPlayMultiButton.display()
+			menuSettingButton.display()
+			menuLeaveButton.display()
+			for eventMenu in pygame.event.get():
+				if eventMenu.type == pygame.QUIT:
+					return self.LEAVE
+				if eventMenu.type == pygame.MOUSEBUTTONDOWN and eventMenu.button == 1:
+					if menuPlaySoloButton.isCliked():
+						pygame.mouse.set_visible(False)
+						return self.SOLO
+					if menuSettingButton.isCliked():
+						return self.SETTINGS
+					if menuLeaveButton.isCliked():
+						return self.LEAVE
+				if eventMenu.type == pygame.QUIT:
+					return self.LEAVE
+				pygame.display.flip()
+
+	def solo(self):
+		stateGame = True #if True, mode is on play, if not, mode is on pause
+		#things that need to be ignited once for the play part
+		aim = Aim(self.window)
+		player = Player("player", X11(self.window, 0, 0))
+		enemy = Enemy("Simple ennemy", X11(self.window, 1700, 540, False))
+		enemy2 = Enemy("a second enemy",X11(self.window, 1700, 540, False))
 
 
+		#things that need to be ignited once for the solo pause part
+		PauseFont = self.Font.render("PAUSE", True,[255, 255, 255])
+		backToGameButton = Button(percentPix((50,35)), self.pauseSurf, percentPix((20,15)), "Back to game", self.Font, "./pictures/graySquareButton.png")
+		backToMenuButton = Button(percentPix((50, 50)), self.pauseSurf, percentPix((20, 15)), "Back to menu", self.Font, "./pictures/graySquareButton.png")
+		pauseSettingButton = Button(percentPix((50,65)), self.pauseSurf, percentPix((20,15)),"Settings", self.Font, "./pictures/graySquareButton.png")
+		pauseLeaveButton = Button(percentPix((50,80)), self.pauseSurf, percentPix((20,15)), "Leave the Game", self.Font, "./pictures/graySquareButton.png")
 
+		#in this loop place things that need to be looped in the game and the pause
+		while True:
+			if stateGame:
+				self.clock.tick(60)
+				pygame.mouse.set_visible(False)
+				self.window.blit(self.gameSurf, (0,0))
+				aim.focusAim()
+				keypress = pygame.key.get_pressed()
+				if keypress[pygame.K_z]:
+					player.move(0, -1)
+				if keypress[pygame.K_s]:
+					player.move(0, 1)
+				if keypress[pygame.K_d]:
+					player.move(1, 0)
+				if keypress[pygame.K_q]:
+					player.move(-1, 0)
+				for event in pygame.event.get():
+					if event.type == pygame.QUIT:
+						return self.LEAVE
+					if event.type == pygame.MOUSEBUTTONDOWN:
+						player.spacecraft.shoot()
+					if event.type == pygame.KEYDOWN:
+						if event.key == pygame.K_ESCAPE:
+							stateGame = False
 
+				enemy.move()
+				enemy2.move()
+				enemy.spacecraft.shoot(player)
+				enemy2.spacecraft.shoot(player)
+				enemy.spacecraft.update()
+				enemy2.spacecraft.update()
+				player.spacecraft.update()
 
+			if not stateGame:
+				self.clock.tick(60)
+				pygame.mouse.set_visible(True)
+				self.window.blit(self.pauseSurf, (0,0))
+				self.window.blit(PauseFont, percentPix((47,20)))
+				backToGameButton.display()
+				backToMenuButton.display()
+				pauseSettingButton.display()
+				pauseLeaveButton.display()
+				for eventPause in pygame.event.get():
+					if eventPause.type == pygame.QUIT:
+						stateGame = True
+					if eventPause.type == pygame.MOUSEBUTTONDOWN and eventPause.button == 1:
+						if backToGameButton.isCliked():
+							pygame.mouse.set_visible(False)
+							stateGame = True
+						if backToMenuButton.isCliked():
+							return self.MENU
+						if pauseSettingButton.isCliked():
+							pass #definition to print the settings ??
+						if pauseLeaveButton.isCliked():
+							return self.LEAVE
+					if eventPause.type == pygame.KEYDOWN:
+						if eventPause.key == pygame.K_ESCAPE:
+							stateGame = True
+					if eventPause.type == pygame.QUIT:
+						return LEAVE
+			pygame.display.flip()
 
+	def mutli(self):
+			#place here things that need to be ignited once
 
+			#in this loop place things that need to be looped in the multi
+			pass
 
+	def settings(self):
+				#place here things that need to be ignited once
+				SettingFont = self.Font.render("Settings", True, [255, 255, 255])
+				playerName = inputBox(self.SettingSurf, percentPix((35, 20)), percentPix((20, 8)), "Name")
+				fullscreenButton = Button(percentPix((65, 50)), self.SettingSurf, percentPix((20, 15)), "Fullscreen",self.Font, "./pictures/graySquareButton.png")
+				windowedButton = Button(percentPix((35, 50)), self.SettingSurf, percentPix((20, 15)), "Windowed",self.Font, "./pictures/graySquareButton.png")
+				saveButton = Button(percentPix((65, 25)), self.SettingSurf, percentPix((10, 15)), "Save",self.Font, "./pictures/graySquareButton.png")
+				backToMenuButton = Button(percentPix((5, 90)), self.SettingSurf, percentPix((5.50,6.00)), "back", self.Font)
+				#in this loop place things that need to be looped in the menu
+				while True:
+					self.clock.tick(60)
+					pygame.mouse.set_visible(True)
+					self.window.blit(self.SettingSurf, (0,0))
+					self.window.blit(SettingFont, percentPix((47, 15)))
+					fullscreenButton.display()
+					windowedButton.display()
+					saveButton.display()
+					backToMenuButton.display()
+					for eventSetting in pygame.event.get():
+						if eventSetting.type == pygame.QUIT:
+							return self.LEAVE
+						if eventSetting.type == pygame.KEYDOWN:
+							playerName.update(eventSetting.key)
+						if eventSetting.type == pygame.MOUSEBUTTONDOWN and eventSetting.button == 1:
+							if fullscreenButton.isCliked():
+								self.screen = "fullscreen"
+							if windowedButton.isCliked():
+								self.screen = "windowed"
+							if saveButton.isCliked():
+								self.playername = playerName.get_text()
+							if backToMenuButton.isCliked():
+								return self.MENU
+					pygame.display.flip()
 
-#class enemy(pygame.sprite.Sprite):
+	def stop(self):
+		"""
+		The close method to write the current
+		config and close the config file
 
+		:param:
+		:return:
+		"""
+		self.config = open(self.confFile, 'w')
+		self.config.write(self.screen + "\n" + self.playername + "\n")
+		self.config.close()
