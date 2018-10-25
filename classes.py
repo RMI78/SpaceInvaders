@@ -106,9 +106,9 @@ class Manager():
 		stateGame = True #if True, mode is on play, if not, mode is on pause
 		#things that need to be ignited once for the play part
 		aim = Aim(self.window)
-		player = Player("player", X11(self.window, 0, 0))
-		enemy = Enemy("Simple ennemy", X11(self.window, 1700, 540, False))
-		enemy2 = Enemy("a second enemy",X11(self.window, 1700, 540, False))
+		player = Player("player", X11(self.window, 10, 10))
+		enemy = Enemy("Simple ennemy", X11(self.window, 1600, 500, False))
+		enemy2 = Enemy("a second enemy",X11(self.window, 1600, 600, False))
 
 
 		#things that need to be ignited once for the solo pause part

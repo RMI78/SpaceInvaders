@@ -37,6 +37,7 @@ class SpaceShip:
 		if not direction:
 			self.image = pygame.transform.flip(self.image, True, False)
 			self.image2 = pygame.transform.flip(self.image2, True, False)
+			self.image3 = pygame.transform.flip(self.image3, True, False)
 		self.currentImage = self.image
 		self.rect = self.image.get_rect()
 		self.rect.x, self.rect.y = (x, y)
@@ -104,15 +105,14 @@ class Player():
 		:param posx, posy:
 		:return:
 		"""
-		self.spacecraft.widthDisplay, self.spacecraft.heightDisplay = pygame.display.get_surface().get_size()
-		if posy == 1 and self.spacecraft.rect.y <= self.spacecraft.heightDisplay-self.spacecraft.height:
-			self.spacecraft.rect.y += self.spacecraft.speed
-		elif posy == -1 and self.spacecraft.rect.y > 0:
-			self.spacecraft.rect.y -= self.spacecraft.speed
-		elif posx == 1 and self.spacecraft.rect.x <= (self.spacecraft.widthDisplay-self.spacecraft.width)//2:
-			self.spacecraft.rect.x += self.spacecraft.speed
-		elif posx == -1 and self.spacecraft.rect.x > 0 :
-			self.spacecraft.rect.x -= self.spacecraft.speed
+		display = pygame.display.get_surface().get_rect()
+		display.x, display.y, display.w, display.h = (display.x+self.spacecraft.width, display.y+self.spacecraft.height, (display.w/2)-self.spacecraft.width*2, display.h-self.spacecraft.height*2)
+
+		self.spacecraft.rect.y += self.spacecraft.speed*posy
+		self.spacecraft.rect.x += self.spacecraft.speed*posx
+		if not display.colliderect(self.spacecraft.rect):
+			self.spacecraft.rect.y -= self.spacecraft.speed*posy
+			self.spacecraft.rect.x -= self.spacecraft.speed*posx
 
 
 
@@ -129,15 +129,14 @@ class Enemy():
 		:param posx, posy:
 		:return:
 		"""
-		posx = random.choice([1, -1, 0])
-		posy = random.choice([1, -1, 0])
+		posx = random.choice([0, 1, -1])
+		posy = random.choice([0, 1, -1])
 
-		self.spacecraft.widthDisplay, self.spacecraft.heightDisplay = pygame.display.get_surface().get_size()
-		if posy == 1 and self.spacecraft.rect.y <= self.spacecraft.heightDisplay-self.spacecraft.height:
-			self.spacecraft.rect.y += self.spacecraft.speed
-		elif posy == -1 and self.spacecraft.rect.y > 0:
-			self.spacecraft.rect.y -= self.spacecraft.speed
-		elif posx == 1 and self.spacecraft.rect.x >= (self.spacecraft.widthDisplay-self.spacecraft.width)//2:
-			self.spacecraft.rect.x += self.spacecraft.speed
-		elif posx == -1 and self.spacecraft.rect.x > 0 :
-			self.spacecraft.rect.x -= self.spacecraft.speed
+		display = pygame.display.get_surface().get_rect()
+		display.x, display.y, display.w, display.h = (display.x+(display.w/2)+self.spacecraft.width, display.y+self.spacecraft.height, display.w-(display.x+(display.w/2)+self.spacecraft.width*2), display.h-self.spacecraft.height*2)
+
+		self.spacecraft.rect.y += self.spacecraft.speed*posy
+		self.spacecraft.rect.x += self.spacecraft.speed*posx
+		if not display.colliderect(self.spacecraft.rect):
+			self.spacecraft.rect.y -= self.spacecraft.speed*posy
+			self.spacecraft.rect.x -= self.spacecraft.speed*posx
