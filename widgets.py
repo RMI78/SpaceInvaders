@@ -2,6 +2,16 @@ import math
 import pygame
 from functions import *
 
+
+
+"""class which create buttons
+arguments: Coords: tuple, Surface: Surface object, Size: tuple, Text: string, Font: Font object, Image = String
+to use, proceed this way:
+if event.type == MOUSEBUTTONDOWN and event.button == 1:
+	mouse = pygame.mouse.get_pos
+	if Button.imageRect.colliderect(mouse)
+	"""
+
 class Button:
 	def __init__(self, Coords, Surface, Size, Text=None, Font=None, Image=None):
 		self.coords = Coords
@@ -71,17 +81,18 @@ class Button:
 	"""
 class inputBox():
 
-	def __init__(self, surface, position, size , text=""):
+	def __init__(self, surface, position, size , color, text=""):
 		if len(text) != 0:
 			self.text = text + ": "
 		self.message = self.text
 		self.surf = surface
+		self.colorBox = color
 		self.Font = pygame.font.Font(None,40)
 		self.frame = pygame.Rect(position, size)
 		self.input = pygame.Rect(tuple(map(operator.add, position, percentPix((1,1)))), tuple(map(operator.sub, size, percentPix((0.5,0.5)))))
 		self.input.center = self.frame.center
-		pygame.draw.rect(self.surf, [255,255,255], self.frame)
-		pygame.draw.rect(self.surf, [0,0,0], self.input)
+		pygame.draw.rect(self.surf, reverseColor(self.colorBox), self.frame)
+		pygame.draw.rect(self.surf, self.colorBox, self.input)
 		self.inputFont = self.Font.render(self.message, True, (255,255,255))
 		self.inputFontRect = self.inputFont.get_rect()
 		self.inputFontRect.center = self.input.center
@@ -93,8 +104,8 @@ class inputBox():
 			self.message = self.message[0:-1]
 		elif key <= 127 and len(self.message) < 20:
 			self.message = self.message + chr(key)
-		pygame.draw.rect(self.surf, [255,255,255], self.frame)
-		pygame.draw.rect(self.surf, [0,0,0], self.input)
+		pygame.draw.rect(self.surf, reverseColor(self.colorBox), self.frame)
+		pygame.draw.rect(self.surf, self.colorBox, self.input)
 		self.inputFont = self.Font.render(self.message, True, (255,255,255))
 		self.input.center = self.frame.center
 		self.inputFontRect = self.inputFont.get_rect()

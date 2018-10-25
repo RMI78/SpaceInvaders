@@ -45,3 +45,23 @@ def mouseAngle(objrect):
 	if distanceX != 0 or distanceY != 0:
 		return math.degrees(math.atan(distanceY/distanceX))
 	else: pass
+
+def reverseColor(color):
+	middleColor = (127, 127, 127)
+	red = int(math.sqrt(pow((color[0] - middleColor[0]), 2)))
+	green = int(math.sqrt(pow((color[1] - middleColor[1]), 2)))
+	blue = int(math.sqrt(pow((color[2] - middleColor[2]), 2)))
+	if color[0] >= 127:
+		r = 127 - red
+	elif color[0] < 127:
+		r = 127 + red
+	if color[1] >= 127:
+		g = 127 - green
+	elif color[1] < 127:
+		g = 127 + green
+	if color[2] >= 127:
+		b = 127 -blue
+	elif color[2] < 127:
+		b = 127 + blue
+	colors = (r, g, b)
+	return colors

@@ -14,14 +14,6 @@ class Aim:
 	def focusAim(self):
 		self.display.blit(self.image, pygame.mouse.get_pos())
 
-"""class which create buttons
-arguments: Coords: tuple, Surface: Surface object, Size: tuple, Text: string, Font: Font object, Image = String
-to use, proceed this way:
-if event.type == MOUSEBUTTONDOWN and event.button == 1:
-	mouse = pygame.mouse.get_pos
-	if Button.imageRect.colliderect(mouse)
-	"""
-
 
 
 
@@ -150,6 +142,7 @@ class Manager():
 				enemy.spacecraft.update()
 				enemy2.spacecraft.update()
 				player.spacecraft.update()
+				player.display_name()
 
 			if not stateGame:
 				self.clock.tick(60)
@@ -189,7 +182,7 @@ class Manager():
 	def settings(self):
 				#place here things that need to be ignited once
 				SettingFont = self.Font.render("Settings", True, [255, 255, 255])
-				playerName = inputBox(self.SettingSurf, percentPix((35, 20)), percentPix((20, 8)), "Name")
+				playerName = inputBox(self.SettingSurf, percentPix((35, 20)), percentPix((20, 8)), [0,0,0], "Name")
 				fullscreenButton = Button(percentPix((65, 50)), self.SettingSurf, percentPix((20, 15)), "Fullscreen",self.Font, "./pictures/graySquareButton.png")
 				windowedButton = Button(percentPix((35, 50)), self.SettingSurf, percentPix((20, 15)), "Windowed",self.Font, "./pictures/graySquareButton.png")
 				saveButton = Button(percentPix((65, 25)), self.SettingSurf, percentPix((10, 15)), "Save",self.Font, "./pictures/graySquareButton.png")

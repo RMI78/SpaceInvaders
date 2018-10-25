@@ -27,7 +27,7 @@ class Bullet:
 		self.rect.y = self.coof * self.rect.x +self.b
 
 class SpaceShip:
-	def __init__(self, display, x, y, direction, image, frequency=20):
+	def __init__(self, display, x, y, image, direction=True, frequency=20):
 		self.display = display
 		self.strForImage2 = image[:len(image)-4] + '2' + image[-4:]
 		self.strForImage3 = image[:len(image)-4] + '3' + image[-4:]
@@ -86,7 +86,7 @@ class X11(SpaceShip):
 		self.life = 100
 		self.speed = 10
 		self.name = "X11"
-		SpaceShip.__init__(self, display, x, y, direction, image, frequency)
+		SpaceShip.__init__(self, display, x, y, image, direction, frequency)
 
 
 
@@ -96,6 +96,15 @@ class Player():
 	def __init__(self, name, spacecraft):
 		self.name = name
 		self.spacecraft = spacecraft
+		self.font = pygame.font.SysFont(None, 25)
+
+	def display_name(self):
+		self.renderedName = self.font.render(self.name, True, (255,255,255))
+		self.rectRenderedName = self.renderedName.get_rect()
+		self.rectRenderedName.top = self.spacecraft.rect.bottom
+		self.rectRenderedName.midtop = self.spacecraft.rect.midbottom
+		self.spacecraft.display.blit(self.renderedName, self.rectRenderedName)
+
 
 	def move(self, posx, posy):
 		"""
