@@ -216,7 +216,7 @@ class Manager():
 								self.screen = "windowed"
 							if saveButton.isCliked():
 								self.playername = playerName.get_text()
-								self.stop()
+								self.writeConfig()
 							if backToMenuButton.isCliked():
 								return self.MENU
 					pygame.display.flip()
