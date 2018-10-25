@@ -69,6 +69,12 @@ class Manager():
 		menuPlayMultiButton = Button(percentPix((50,47)), self.MenuSurf, percentPix((20,15)), "Multi", self.Font, "./pictures/graySquareButton.png")
 		menuSettingButton =  Button(percentPix((50,64)), self.MenuSurf, percentPix((20,15)), "Settings", self.Font, "./pictures/graySquareButton.png")
 		menuLeaveButton = Button(percentPix((50,81)), self.MenuSurf, percentPix((20,15)),"Leave the Game", self.Font, "./pictures/graySquareButton.png")
+		pygame.mouse.set_visible(True)
+		menuPlaySoloButton.display()
+		menuPlayMultiButton.display()
+		menuSettingButton.display()
+		menuLeaveButton.display()
+
 		while True:
 			#in this loop place things that need to be looped in the menu
 			self.clock.tick(60)
@@ -98,9 +104,9 @@ class Manager():
 		stateGame = True #if True, mode is on play, if not, mode is on pause
 		#things that need to be ignited once for the play part
 		aim = Aim(self.window)
-		player = Player("player", X11(self.window, 0, 0))
-		enemy = Enemy("Simple ennemy", X11(self.window, 1700, 540, False))
-		enemy2 = Enemy("a second enemy",X11(self.window, 1700, 540, False))
+		player = Player("player", X11(self.window, 10, 10))
+		enemy = Enemy("Simple ennemy", X11(self.window, 1600, 500, False))
+		enemy2 = Enemy("a second enemy",X11(self.window, 1600, 600, False))
 
 
 		#things that need to be ignited once for the solo pause part
