@@ -77,6 +77,12 @@ class Manager():
 		menuPlayMultiButton = Button(percentPix((50,47)), self.MenuSurf, percentPix((20,15)), "Multi", self.Font, "./pictures/graySquareButton.png")
 		menuSettingButton =  Button(percentPix((50,64)), self.MenuSurf, percentPix((20,15)), "Settings", self.Font, "./pictures/graySquareButton.png")
 		menuLeaveButton = Button(percentPix((50,81)), self.MenuSurf, percentPix((20,15)),"Leave the Game", self.Font, "./pictures/graySquareButton.png")
+		pygame.mouse.set_visible(True)
+		menuPlaySoloButton.display()
+		menuPlayMultiButton.display()
+		menuSettingButton.display()
+		menuLeaveButton.display()
+
 		while True:
 			#in this loop place things that need to be looped in the menu
 			self.clock.tick(60)
