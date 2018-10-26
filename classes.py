@@ -26,14 +26,14 @@ class Manager():
 		#load the screen
 		self.displayInfos = pygame.display.Info()
 		self.displaySize = (self.displayInfos.current_w, self.displayInfos.current_h)
-		if self.screen == "fullscreen":
-			self.window = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-		else:
+		if self.screen == "windowed\n":
 			self.window = pygame.display.set_mode(self.displaySize, pygame.RESIZABLE)
+		if self.screen == "fullscreen\n":
+			self.window = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+
 		pygame.display.set_caption("Space Invaders")
 		self.Font = pygame.font.SysFont("monospace", 35, True)
 
-		#load pics and resize it, load clock
 		self.pauseSurf = pygame.Surface(pygame.display.get_surface().get_size())
 		self.pauseSurf.fill(pygame.Color("black"))
 		self.pauseSurf.set_alpha(200)
@@ -151,6 +151,8 @@ class Manager():
 							return self.MENU
 						if self.pauseSettingButton.isCliked():
 							self.settings()
+							self.loadSetting()
+							player = Player(self.playername, X11(self.window, player.spacecraft.rect.x, player.spacecraft.rect.y))
 						if self.pauseLeaveButton.isCliked():
 							return self.LEAVE
 					if eventPause.type == pygame.KEYDOWN:
@@ -158,6 +160,8 @@ class Manager():
 							stateGame = True
 					if eventPause.type == pygame.QUIT:
 						return LEAVE
+				pygame.mouse.set_visible(False)
+
 			pygame.display.flip()
 
 	def mutli(self):
@@ -185,12 +189,15 @@ class Manager():
 						if eventSetting.type == pygame.QUIT:
 							return self.LEAVE
 						if eventSetting.type == pygame.KEYDOWN:
-							playerName.update(eventSetting.key)
+							if playerName.isFocused:
+								playerName.update(eventSetting.key)
 						if eventSetting.type == pygame.MOUSEBUTTONDOWN and eventSetting.button == 1:
+							if playerName.isCliked():
+								pass
 							if self.fullscreenButton.isCliked():
-								self.screen = "fullscreen"
+								self.screen = "fullscreen\n"
 							if self.windowedButton.isCliked():
-								self.screen = "windowed"
+								self.screen = "windowed\n"
 							if self.saveButton.isCliked():
 								self.playername = playerName.get_text()
 								self.writeConfig()
@@ -207,7 +214,7 @@ class Manager():
 		:return:
 		"""
 		self.config = open(self.confFile, 'w')
-		self.config.write(self.screen + "\n" + self.playername + "\n")
+		self.config.write(self.screen + self.playername)
 		self.config.close()
 
 	def loadSetting(self):
@@ -218,10 +225,10 @@ class Manager():
 			self.playername = configList[1]
 
 		except:
-			self.screen = "windowed"
+			self.screen = "windowed\n"
 			self.playername = "player"
 			self.config = open(self.confFile, 'w')
-			self.config.write(self.screen + "\n" + self.playername + "\n")
+			self.config.write(self.screen  + self.playername)
 
 	def loadPictures(self):
 		self.icon = pygame.image.load("./pictures/spaceInvaders_icon.jpg")

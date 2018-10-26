@@ -43,8 +43,17 @@ def mouseAngle(objrect):
 	distanceY = mouseY - objrect.rect.y
 	distanceX = mouseX - objrect.rect.x
 	if distanceX != 0 or distanceY != 0:
-		return math.degrees(math.atan(distanceY/distanceX))
-	else: pass
+		return -1*(math.degrees(math.atan(distanceY/distanceX)))
+	else: return 0
+
+#get the angle beetween 2 surfaces in degrees
+def surfAngle(surf1, surf2):
+	DistanceX = surf1.rect.centerx - surf2.rect.centerx
+	DistanceY = surf1.rect.centery - surf2.rect.centery
+	if DistanceX != 0 or DistanceY != 0:
+		return -1*(math.degrees(math.atan(DistanceY/DistanceX)))
+	else: return 0
+
 
 def reverseColor(color):
 	middleColor = (127, 127, 127)
