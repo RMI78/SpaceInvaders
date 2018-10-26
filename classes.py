@@ -53,7 +53,7 @@ class Manager():
 	def menu(self):
 		#things that need to be ignited once
 		MenuFont = self.Font.render("Space Invaders", True, [255,255,255])
-
+		self.loadButtons()
 		pygame.mouse.set_visible(True)
 		self.menuPlaySoloButton.display()
 		self.menuPlayMultiButton.display()
@@ -88,6 +88,7 @@ class Manager():
 	def solo(self):
 		stateGame = True #if True, mode is on play, if not, mode is on pause
 		self.loadSetting()
+		self.loadButtons()
 		#things that need to be ignited once for the play part
 		aim = Aim(self.window)
 		player = Player(self.playername, X11(self.window, 10, 10))
@@ -174,7 +175,7 @@ class Manager():
 				#place here things that need to be ignited once
 				SettingFont = self.Font.render("Settings", True, [255, 255, 255])
 				playerName = inputBox(self.SettingSurf, percentPix((35, 20)), percentPix((20, 8)), [0,0,0], "Name")
-				self.backButton = Button(percentPix((5, 90)), self.SettingSurf, percentPix((5.50,6.00)), "back", self.Font)
+				self.loadButtons()
 				#in this loop place things that need to be looped in the menu
 				while True:
 					self.clock.tick(60)
@@ -235,6 +236,8 @@ class Manager():
 		self.gameSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
 		self.MenuSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
 		self.SettingSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
+
+	def loadButtons(self):
 		self.menuPlaySoloButton = Button(percentPix((50, 30)), self.MenuSurf, percentPix((20,15)), "Solo", self.Font, "./pictures/graySquareButton.png")
 		self.menuPlayMultiButton = Button(percentPix((50,47)), self.MenuSurf, percentPix((20,15)), "Multi", self.Font, "./pictures/graySquareButton.png")
 		self.menuSettingButton =  Button(percentPix((50,64)), self.MenuSurf, percentPix((20,15)), "Settings", self.Font, "./pictures/graySquareButton.png")
@@ -246,3 +249,4 @@ class Manager():
 		self.fullscreenButton = Button(percentPix((65, 50)), self.SettingSurf, percentPix((20, 15)), "Fullscreen",self.Font, "./pictures/graySquareButton.png")
 		self.windowedButton = Button(percentPix((35, 50)), self.SettingSurf, percentPix((20, 15)), "Windowed",self.Font, "./pictures/graySquareButton.png")
 		self.saveButton = Button(percentPix((65, 25)), self.SettingSurf, percentPix((10, 15)), "Save",self.Font, "./pictures/graySquareButton.png")
+		self.backButton = Button(percentPix((5, 90)), self.SettingSurf, percentPix((5.50,6.00)), "back", self.Font)
