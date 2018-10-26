@@ -25,5 +25,4 @@ while state != LEAVE:
 		state = manager.solo()
 	if state == SETTINGS:
 		state = manager.settings()
-manager.writeConfig()
 pygame.quit()
