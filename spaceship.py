@@ -19,7 +19,6 @@ class Bullet:
 		self.coof = ((self.yTarget-height/2)-self.rect.y)/(self.xTarget-self.rect.x)
 		self.b = self.rect.y - self.coof*self.rect.x+height/2
 		self.angle = angle
-		#print(self.angle)
 		self.image = pygame.transform.rotate(self.image, self.angle)
 
 	def update(self):
@@ -54,9 +53,9 @@ class SpaceShip:
 		if self.lastShots > 0:
 			if player:
 				if random.randint(0,800)<50:
-					self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, 0, 10, False, player.spacecraft.rect.x, player.spacecraft.rect.y+player.spacecraft.height/2))
+					self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, surfAngle(self, player.spacecraft), 10, False, player.spacecraft.rect.x, player.spacecraft.rect.y+player.spacecraft.height/2))
 			if not player:
-				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, -1*mouseAngle(self)))
+				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, mouseAngle(self)))
 			self.lastShots = self.lastShots-1
 		else: pass
 

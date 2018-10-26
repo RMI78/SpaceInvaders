@@ -23,26 +23,28 @@ class Manager():
 		self.confFile = confFile
 		try:
 			self.config = open(self.confFile, 'r')
-			self.configList = config.readlines()
-			self.screen = configList[0]
-			self.playername = configList[1]
+			self.configList = self.config.readlines()
+			self.screen = self.configList[0]
+			self.playername = self.configList[1]
 		except:
-			self.screen = "windowed"
+			print("coucou")
+			self.screen = "windowed\n"
 			self.playername = "player"
 			self.config = open(self.confFile, 'w')
-			self.config.write(self.screen + "\n" + self.playername + "\n")
+			self.config.write(self.screen  + self.playername)
+
 
 		#load the screen
 		self.displayInfos = pygame.display.Info()
 		self.displaySize = (self.displayInfos.current_w, self.displayInfos.current_h)
-		if self.screen == "windowed":
+		if self.screen == "windowed\n":
 			self.window = pygame.display.set_mode(self.displaySize, pygame.RESIZABLE)
-		if self.screen == "fullscreen":
+		if self.screen == "fullscreen\n":
 			self.window = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 		pygame.display.set_caption("Space Invaders")
 		self.Font = pygame.font.SysFont("monospace", 35, True)
 
-		#load pics and resize it, load clock
+		#load pics and resize them, load clock
 		self.icon = load_file("./pictures/spaceInvaders_icon.jpg")
 		self.gameSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
 		self.MenuSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
@@ -104,7 +106,7 @@ class Manager():
 		stateGame = True #if True, mode is on play, if not, mode is on pause
 		#things that need to be ignited once for the play part
 		aim = Aim(self.window)
-		player = Player("player", X11(self.window, 10, 10))
+		player = Player(self.playername, X11(self.window, 10, 10))
 		enemy = Enemy("Simple ennemy", X11(self.window, 1600, 500, False))
 		enemy2 = Enemy("a second enemy",X11(self.window, 1600, 600, False))
 
@@ -207,12 +209,15 @@ class Manager():
 						if eventSetting.type == pygame.QUIT:
 							return self.LEAVE
 						if eventSetting.type == pygame.KEYDOWN:
-							playerName.update(eventSetting.key)
+							if playerName.isFocused:
+								playerName.update(eventSetting.key)
 						if eventSetting.type == pygame.MOUSEBUTTONDOWN and eventSetting.button == 1:
+							if playerName.isCliked():
+								pass
 							if fullscreenButton.isCliked():
-								self.screen = "fullscreen"
+								self.screen = "fullscreen\n"
 							if windowedButton.isCliked():
-								self.screen = "windowed"
+								self.screen = "windowed\n"
 							if saveButton.isCliked():
 								self.playername = playerName.get_text()
 								self.writeConfig()
@@ -229,5 +234,5 @@ class Manager():
 		:return:
 		"""
 		self.config = open(self.confFile, 'w')
-		self.config.write(self.screen + "\n" + self.playername + "\n")
+		self.config.write(self.screen + self.playername)
 		self.config.close()

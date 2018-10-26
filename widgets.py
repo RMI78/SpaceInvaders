@@ -27,11 +27,17 @@ class Button:
 				self.image = pygame.transform.scale(self.image, (Size))
 				self.imageRect = self.image.get_rect()
 				self.imageRect.center = self.coords
+
+				self.imageCliked = load_file(Image[:len(Image)-4] + 'Cliked' + Image[-4:])
+				self.imageCliked = pygame.transform.scale(self.imageCliked, (Size))
+				self.imageRectCliked = self.imageCliked.get_rect()
+				self.isImage = True
 			except:
 				Image=None
 				print("failed to load your image button :'(")
 		if Image == None :
 			#create and blit a basic button if any image is loaded or if the loading of the image fail
+			self.isImage = False
 			self.reducedSize = tuple(map(operator.sub, self.size, percentPix((1,1))))
 			self.image = pygame.Surface(self.size)
 			self.image2 = pygame.Surface(self.reducedSize)
@@ -62,6 +68,10 @@ class Button:
 
 	def isCliked(self):
 		if self.imageRect.collidepoint(pygame.mouse.get_pos()):
+			if self.isImage:
+				self.image = self.imageCliked
+			else:
+				self.image2.fill((0, 255, 0))
 			return True
 		else: return False
 
@@ -72,11 +82,14 @@ class Button:
 		self.display()
 
 """class that create text input,
-	there is no notions of focus on the text box for the moment,
 	to use it, some code need to be implemented into the event loop in
 	order to get the keys, proceed this way to get the keys:
 	if event.type == pygame.KEYDOWN:
-		playerName.update(event.key)
+		if playerName.isFocused:
+			playerName.update(event.key)
+	if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+		if playerName.isCliked():
+			pass
 
 	"""
 class inputBox():
@@ -84,10 +97,11 @@ class inputBox():
 	def __init__(self, surface, position, size , color, text=""):
 		if len(text) != 0:
 			self.text = text + ": "
+		self.isFocused = False
 		self.message = self.text
 		self.surf = surface
 		self.colorBox = color
-		self.Font = pygame.font.Font(None,40)
+		self.Font = pygame.font.Font(None,round(size[1]*0.6))
 		self.frame = pygame.Rect(position, size)
 		self.input = pygame.Rect(tuple(map(operator.add, position, percentPix((1,1)))), tuple(map(operator.sub, size, percentPix((0.5,0.5)))))
 		self.input.center = self.frame.center
@@ -102,6 +116,8 @@ class inputBox():
 	def update(self, key):
 		if key == pygame.K_BACKSPACE and len(self.message) > len(self.text):
 			self.message = self.message[0:-1]
+		elif key == pygame.K_RETURN:
+			pass
 		elif key <= 127 and len(self.message) < 20:
 			self.message = self.message + chr(key)
 		pygame.draw.rect(self.surf, reverseColor(self.colorBox), self.frame)
@@ -111,6 +127,12 @@ class inputBox():
 		self.inputFontRect = self.inputFont.get_rect()
 		self.inputFontRect.center = self.input.center
 		self.surf.blit(self.inputFont, self.inputFontRect)
+
+	def isCliked(self):
+		if self.frame.collidepoint(pygame.mouse.get_pos()):
+			if self.isFocused:
+				self.isFocused = False
+			else: self.isFocused = True
 
 	def get_text(self):
 		return self.message[len(self.text):]
