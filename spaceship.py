@@ -28,6 +28,7 @@ class Bullet:
 class SpaceShip:
 	def __init__(self, display, x, y, image, direction=True, frequency=20):
 		self.display = display
+		self.direction = direction
 		self.strForImage2 = image[:len(image)-4] + '2' + image[-4:]
 		self.strForImage3 = image[:len(image)-4] + '3' + image[-4:]
 		self.image = pygame.transform.scale(load_file(image), percentPix((9,10)))
@@ -92,7 +93,7 @@ class X11(SpaceShip):
 
 
 
-class Player():
+class Player:
 	def __init__(self, name, spacecraft):
 		self.name = name
 		self.spacecraft = spacecraft
@@ -114,7 +115,11 @@ class Player():
 		:return:
 		"""
 		display = pygame.display.get_surface().get_rect()
-		display.x, display.y, display.w, display.h = (display.x+self.spacecraft.width, display.y+self.spacecraft.height, (display.w/2)-self.spacecraft.width*2, display.h-self.spacecraft.height*2)
+		if self.spacecraft.direction:
+			display.x, display.y, display.w, display.h = (display.x+self.spacecraft.width, display.y+self.spacecraft.height, (display.w/2)-self.spacecraft.width*2, display.h-self.spacecraft.height*2)
+
+		else:
+			display.x, display.y, display.w, display.h = (display.x+(display.w/2)+self.spacecraft.width, display.y+self.spacecraft.height, display.w-(display.x+(display.w/2)+self.spacecraft.width*2), display.h-self.spacecraft.height*2)
 
 		self.spacecraft.rect.y += self.spacecraft.speed*posy
 		self.spacecraft.rect.x += self.spacecraft.speed*posx
@@ -122,10 +127,12 @@ class Player():
 			self.spacecraft.rect.y -= self.spacecraft.speed*posy
 			self.spacecraft.rect.x -= self.spacecraft.speed*posx
 
+	def multi(self):
+		list = "{}, {}".format(self.spacecraft.rect.x,self.spacecraft.rect.y).encode()
+		return list
 
 
-
-class Enemy():
+class Enemy:
 	def __init__(self, name, spacecraft):
 		self.name = name
 		self.spacecraft = spacecraft

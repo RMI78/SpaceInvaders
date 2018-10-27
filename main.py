@@ -23,6 +23,8 @@ while state != LEAVE:
 		state = manager.menu()
 	if state == SOLO:
 		state = manager.solo()
+	if state == MULTI:
+		state = manager.mutli()
 	if state == SETTINGS:
 		state = manager.settings()
 pygame.quit()
