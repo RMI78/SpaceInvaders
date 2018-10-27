@@ -15,7 +15,6 @@ class Waitsync(Thread):
             self.client.send("True".encode())
         else:
             self.client.send("False".encode())
-            return True
 
 
 class Waitpacket(Thread):
@@ -35,7 +34,7 @@ class Waitpacket(Thread):
         """
         Wait packet of client1
         """
-        packet = self.client1.recv(4096)
+        packet = self.client1.recv(255)
         if packet != "":
             return packet
 
@@ -43,6 +42,7 @@ class Waitpacket(Thread):
         packet = self.wait_packet()
         print(packet)
         self.send_packet(packet)
+
 
 if __name__ == "__main__":
     socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

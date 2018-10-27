@@ -5,7 +5,7 @@ import random
 
 
 class Bullet:
-	def __init__(self, x, y, height, angle=0,  speed=20, type=True, xTarget=None, yTarget=None):
+	def __init__(self, x, y, height, angle=0,  speed=20, type=True, xTarget=None, yTarget=None, direction=True):
 		self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), percentPix((2,2)))
 		self.rect = self.image.get_rect()
 		self.rect.x, self.rect.y = (x, y)
@@ -14,6 +14,8 @@ class Bullet:
 			self.xTarget, self.yTarget = pygame.mouse.get_pos()
 		else:
 			self.xTarget, self.yTarget = (xTarget, yTarget)
+
+		if not direction:
 			self.speed = -self.speed
 
 		self.coof = ((self.yTarget-height/2)-self.rect.y)/(self.xTarget-self.rect.x)
@@ -50,13 +52,18 @@ class SpaceShip:
 		self.frequency = frequency
 		self.lastShots = self.frequency
 
-	def shoot(self, player=None):
+	def shoot(self, player=None, x=None, y=None, angle=None):
 		if self.lastShots > 0:
 			if player:
 				if random.randint(0,800)<50:
-					self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, surfAngle(self, player.spacecraft), 10, False, player.spacecraft.rect.x, player.spacecraft.rect.y+player.spacecraft.height/2))
-			if not player:
-				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, mouseAngle(self)))
+					self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, surfAngle(self, player.spacecraft), 10, False, player.spacecraft.rect.x, player.spacecraft.rect.y+player.spacecraft.height/2, False))
+
+			if x and  y is not None:
+				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, angle, 20, False, x, y, self.direction))
+
+			elif not player:
+				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, mouseAngle(self), 20, True, None, None, self.direction))
+
 			self.lastShots = self.lastShots-1
 		else: pass
 
@@ -127,8 +134,9 @@ class Player:
 			self.spacecraft.rect.y -= self.spacecraft.speed*posy
 			self.spacecraft.rect.x -= self.spacecraft.speed*posx
 
-	def multi(self):
-		list = "{}, {}".format(self.spacecraft.rect.x,self.spacecraft.rect.y).encode()
+	def multi(self, shoot):
+		xMouse, yMouse = pygame.mouse.get_pos()
+		list = "{}, {}, {}, {}, {}, {}".format(self.spacecraft.rect.x,self.spacecraft.rect.y, shoot, xMouse, yMouse, mouseAngle(self.spacecraft)).encode()
 		return list
 
 

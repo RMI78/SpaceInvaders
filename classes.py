@@ -170,6 +170,7 @@ class Manager():
 
 			pygame.display.flip()
 
+
 	def mutli(self):
 		aim = Aim(self.window)
 		self.loadSetting()
@@ -177,8 +178,9 @@ class Manager():
 
 		networking = Networking()
 		socket = networking.connect()
-		r = networking.sync(socket)
-		if r.decode() == "True":
+		role = networking.sync(socket)
+
+		if role == "True":
 			player = Player(self.playername, X11(self.window, 10, 10))
 			ennemi = Player(self.playername, X11(self.window, 1600, 600, False))
 
@@ -186,12 +188,12 @@ class Manager():
 			player = Player(self.playername, X11(self.window, 1600, 600, False))
 			ennemi = Player(self.playername, X11(self.window, 10, 10))
 
-
 		pygame.mouse.set_visible(False)
 
 		while True:
 			self.clock.tick(60)
 			self.window.blit(self.gameSurf, (0,0))
+			shoot = 0
 			keypress = pygame.key.get_pressed()
 			if keypress[pygame.K_z]:
 				player.move(0, -1)
@@ -206,15 +208,15 @@ class Manager():
 					return self.LEAVE
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					player.spacecraft.shoot()
+					shoot = 1
 
-			_str = networking.send(socket, player.multi())
-			_str = _str.decode()
-			list_str = _str.split(",")
-			list_int = []
-			for i in list_str:
-				list_int.append(int(i))
+			data = networking.send(socket, player.multi(shoot))
+			data = networking.decode_data(data)
 
-			ennemi.spacecraft.rect.x, ennemi.spacecraft.rect.y = (list_int[0], list_int[-1])
+			ennemi.spacecraft.rect.x, ennemi.spacecraft.rect.y, shoot, xMouse, yMouse, angle = data
+			if shoot:
+				ennemi.spacecraft.shoot(None, xMouse, yMouse, angle)
+
 			ennemi.spacecraft.update()
 			player.spacecraft.update()
 			player.display_name()
