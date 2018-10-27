@@ -4,6 +4,9 @@ import math
 import random
 from spaceship import *
 from widgets import *
+import socket
+import pickle
+from networking import Networking
 
 class Aim:
 	def __init__(self, display):
@@ -76,6 +79,8 @@ class Manager():
 				if eventMenu.type == pygame.MOUSEBUTTONDOWN and eventMenu.button == 1:
 					if self.menuPlaySoloButton.isCliked():
 						return self.SOLO
+					if self.menuPlayMultiButton.isCliked():
+						return self.MULTI
 					if self.menuSettingButton.isCliked():
 						return self.SETTINGS
 					if self.menuLeaveButton.isCliked():
@@ -166,10 +171,56 @@ class Manager():
 			pygame.display.flip()
 
 	def mutli(self):
-			#place here things that need to be ignited once
+		aim = Aim(self.window)
+		self.loadSetting()
+		self.loadButtons()
 
-			#in this loop place things that need to be looped in the multi
-			pass
+		networking = Networking()
+		socket = networking.connect()
+		r = networking.sync(socket)
+		if r.decode() == "True":
+			player = Player(self.playername, X11(self.window, 10, 10))
+			ennemi = Player(self.playername, X11(self.window, 1600, 600, False))
+
+		else:
+			player = Player(self.playername, X11(self.window, 1600, 600, False))
+			ennemi = Player(self.playername, X11(self.window, 10, 10))
+
+
+		pygame.mouse.set_visible(False)
+
+		while True:
+			self.clock.tick(60)
+			self.window.blit(self.gameSurf, (0,0))
+			keypress = pygame.key.get_pressed()
+			if keypress[pygame.K_z]:
+				player.move(0, -1)
+			if keypress[pygame.K_s]:
+				player.move(0, 1)
+			if keypress[pygame.K_d]:
+				player.move(1, 0)
+			if keypress[pygame.K_q]:
+				player.move(-1, 0)
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					return self.LEAVE
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					player.spacecraft.shoot()
+
+			_str = networking.send(socket, player.multi())
+			_str = _str.decode()
+			list_str = _str.split(",")
+			list_int = []
+			for i in list_str:
+				list_int.append(int(i))
+
+			ennemi.spacecraft.rect.x, ennemi.spacecraft.rect.y = (list_int[0], list_int[-1])
+			ennemi.spacecraft.update()
+			player.spacecraft.update()
+			player.display_name()
+			aim.focusAim()
+			pygame.display.flip()
+
 
 	def settings(self):
 				#place here things that need to be ignited once
