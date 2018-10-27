@@ -81,6 +81,7 @@ class Button:
 		self.fontRect.move(coords)
 		self.display()
 
+
 """class that create text input,
 	to use it, some code need to be implemented into the event loop in
 	order to get the keys, proceed this way to get the keys:
@@ -90,11 +91,11 @@ class Button:
 	if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 		if playerName.isCliked():
 			pass
-
 	"""
 class inputBox():
 
 	def __init__(self, surface, position, size , color, text=""):
+		#ignit the widget
 		if len(text) != 0:
 			self.text = text + ": "
 		self.isFocused = False
@@ -104,6 +105,8 @@ class inputBox():
 		self.Font = pygame.font.Font(None,round(size[1]*0.6))
 		self.frame = pygame.Rect(position, size)
 		self.input = pygame.Rect(tuple(map(operator.add, position, percentPix((1,1)))), tuple(map(operator.sub, size, percentPix((0.5,0.5)))))
+
+		#draw for the first time
 		self.input.center = self.frame.center
 		pygame.draw.rect(self.surf, reverseColor(self.colorBox), self.frame)
 		pygame.draw.rect(self.surf, self.colorBox, self.input)
@@ -136,3 +139,51 @@ class inputBox():
 
 	def get_text(self):
 		return self.message[len(self.text):]
+
+class statuBar():
+	def __init__(self, total, surface, position, size, color=(255,255,0), text=""):
+		self.total = total
+		self.incrementTotal = total
+		self.surf = surface
+		self.color = color
+		self.mainSurf = pygame.Surface(size)
+		self.mainSurf.set_alpha(0)
+		self.rectMainSurf = self.mainSurf.get_rect()
+		self.rectMainSurf.x = position[0]
+		self.rectMainSurf.y = position[1]
+		if len(text) != 0:
+			self.isText = True
+			self.text = text
+			self.font = pygame.font.Font(None, round(size[1]*0.6))
+			self.frame = pygame.Rect((position[0]/2, position[1]), (size[0]/2, size[1]))
+			self.emptyBar = pygame.Rect(tuple(map(operator.add, (position[0]/2, position[1]), percentPix((1,1)))), tuple(map(operator.sub, (size[0]/2, size[1]), percentPix((0.5,0.5)))))
+			self.bar = self.emptyBar.copy()
+			self.renderedText = self.font.render(self.text, True, (255, 255, 255))
+		else:
+			self.isText = False
+			self.frame = pygame.Rect((position[0]/2, position[1]), (size[0], size[1]))
+			self.emptyBar = pygame.Rect(tuple(map(operator.add, (position[0]/2, position[1]), percentPix((1,1)))), tuple(map(operator.sub, size, percentPix((0.5,0.5)))))
+			self.bar = self.emptyBar.copy()
+
+		self.unit = int(self.bar.width/total)
+
+
+
+	def update(self, value=0):
+		if self.incrementTotal > 0:
+			self.bar.width = self.bar.width + self.unit*value
+			self.incrementTotal = self.incrementTotal + value
+		else: return True
+
+
+	def display(self):
+		self.surf.blit(self.mainSurf, self.rectMainSurf)
+		self.emptyBar.center = self.frame.center
+		self.bar.midleft = self.emptyBar.midleft
+		pygame.draw.rect(self.surf, [255,255,255], self.frame)
+		pygame.draw.rect(self.surf, [0,0,0], self.emptyBar)
+		pygame.draw.rect(self.surf, self.color, self.bar)
+		if self.isText:
+			self.renderedTextRect = self.renderedText.get_rect()
+			self.renderedTextRect.midleft = tuple(map(operator.add, self.frame.midright, percentPix((2,0))))
+			self.surf.blit(self.renderedText, self.renderedTextRect)

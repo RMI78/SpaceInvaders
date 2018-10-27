@@ -35,6 +35,14 @@ def percentPix(percent):
 	if percent[0] > 0 and percent[0] <= 100:
 		if percent[1] > 0 and percent[1] <= 100:
 			return (int(round((percent[0]*wRes)/100)), int(round((percent[1]*hRes)/100)))
+		if percent[1] == 0:
+			return (int(round((percent[0]*wRes)/100)), 0)
+	if percent[0] == 0:
+		if percent[1] > 0 and percent[1] <= 100:
+			return (0, int(round((percent[1]*hRes)/100)))
+		if percent[1] == 0:
+			return (0,0)
+
 	else : print("wrong percentage using precentPix function")
 
 #get the angle beetween the mouse and a rect object in degrees
