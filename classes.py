@@ -281,8 +281,8 @@ class Manager():
 	def loadPictures(self):
 		self.icon = pygame.image.load("./pictures/spaceInvaders_icon.jpg")
 		self.gameSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
-		self.MenuSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
-		self.SettingSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
+		self.MenuSurf = self.gameSurf.copy()
+		self.SettingSurf = self.gameSurf.copy()
 
 	def loadButtons(self, state=None):
 		if state  == self.MENU:
