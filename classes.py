@@ -58,8 +58,6 @@ class Manager():
 		MenuFont = self.Font.render("Space Invaders", True, [255,255,255])
 		self.button_list = self.loadButtons(self.MENU)
 		pygame.mouse.set_visible(True)
-		for buttons in self.button_list:
-			buttons.display()
 
 		while True:
 			#in this loop place things that need to be looped in the menu
@@ -67,10 +65,9 @@ class Manager():
 			pygame.mouse.set_visible(True)
 			self.window.blit(self.MenuSurf, (0,0))
 			self.window.blit(MenuFont, percentPix((42, 15)))
-			self.menuPlaySoloButton.display()
-			self.menuPlayMultiButton.display()
-			self.menuSettingButton.display()
-			self.menuLeaveButton.display()
+			for buttons in self.button_list:
+				buttons.display()
+
 			for eventMenu in pygame.event.get():
 				if eventMenu.type == pygame.QUIT:
 					return self.LEAVE
@@ -92,11 +89,19 @@ class Manager():
 		stateGame = True #if True, mode is on play, if not, mode is on pause
 		self.loadSetting()
 		self.button_list = self.loadButtons(self.SOLO)
+		left_team = pygame.sprite.Group()
+		right_team = pygame.sprite.Group()
 		#things that need to be ignited once for the play part
 		aim = Aim(self.window)
 		player = Player(self.playername, X11(self.window, 10, 10))
 		enemy = Enemy("Simple ennemy", X11(self.window, 1600, 500, False))
 		enemy2 = Enemy("a second enemy",X11(self.window, 1600, 600, False))
+		left_team.add(player.spacecraft)
+		right_team.add(enemy.spacecraft, enemy2.spacecraft)
+		entityList = [player, enemy, enemy2]
+		for entity in entityList:
+			entity.display_life()
+			entity.display_name()
 
 		#things that need to be ignited once for the solo pause part
 		PauseFont = self.Font.render("PAUSE", True,[255, 255, 255])
@@ -130,10 +135,10 @@ class Manager():
 				enemy2.move()
 				enemy.spacecraft.shoot(player)
 				enemy2.spacecraft.shoot(player)
-				enemy.spacecraft.update()
-				enemy2.spacecraft.update()
-				player.spacecraft.update()
-				player.display_name()
+				right_team.update(left_team)
+				left_team.update(right_team)
+				for entity in entityList:
+					entity.update()
 				aim.focusAim()
 
 			if not stateGame:
@@ -233,6 +238,7 @@ class Manager():
 					self.window.blit(SettingFont, percentPix((47, 15)))
 					for buttons in self.button_list:
 						buttons.display()
+
 					for eventSetting in pygame.event.get():
 						if eventSetting.type == pygame.QUIT:
 							return self.LEAVE
@@ -281,6 +287,7 @@ class Manager():
 	def loadPictures(self):
 		self.icon = pygame.image.load("./pictures/spaceInvaders_icon.jpg")
 		self.gameSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
+		self.gameSurf = self.gameSurf.convert()
 		self.MenuSurf = self.gameSurf.copy()
 		self.SettingSurf = self.gameSurf.copy()
 
