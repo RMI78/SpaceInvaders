@@ -6,8 +6,9 @@ import random
 
 
 
-class Bullet:
+class Bullet(pygame.sprite.Sprite):
 	def __init__(self, x, y, height, angle=0,  speed=20, type=True, xTarget=None, yTarget=None, direction=True):
+		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.transform.scale(load_file("./pictures/bullet.png"), percentPix((2,2)))
 		self.rect = self.image.get_rect()
 		self.rect.x, self.rect.y = (x, y)
@@ -61,13 +62,13 @@ class SpaceShip(pygame.sprite.Sprite):
 		if self.lastShots > 0:
 			if player:
 				if random.randint(0,800)<50:
-					self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, surfAngle(self, player.spacecraft), 10, False, player.spacecraft.rect.x, player.spacecraft.rect.y+player.spacecraft.height/2, False))
+					self.list_bullets.add(self.bullet(self.rect.x, self.rect.y, self.height, surfAngle(self, player.spacecraft), 10, False, player.spacecraft.rect.x, player.spacecraft.rect.y+player.spacecraft.height/2, False))
 
 			if x and  y is not None:
-				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, angle, 20, False, x, y, self.direction))
+				self.list_bullets.add(self.bullet(self.rect.x, self.rect.y, self.height, angle, 20, False, x, y, self.direction))
 
 			elif not player:
-				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, mouseAngle(self), 20, True, None, None, self.direction))
+				self.list_bullets.add(self.bullet(self.rect.x, self.rect.y, self.height, mouseAngle(self), 20, True, None, None, self.direction))
 			self.lastShots = self.lastShots-1
 		else: pass
 
