@@ -15,13 +15,26 @@ class Networking:
 
     def sync(self, socket):
         """
-        Send True and wait a True message
+        Send True and wait a message to determine the role
         """
         socket.send("True".encode())
-        r = socket.recv(255)
-        return r
-        
+        role = socket.recv(255).decode()
+        return role
+
     def send(self, socket, object):
+        """
+        Send and recv data.
+        Decode data and return
+        """
         socket.send(object)
-        data = socket.recv(4096)
+        data = socket.recv(255).decode()
         return data
+
+    def decode_data(self, data):
+        data = data.split(",")
+        x, y = (int(i) for i in data[:2])
+        shoot = int(data[2])
+        xMouse, yMouse = (int(i) for i in data[-3:-1])
+        angle = float(data[-1])
+
+        return (x, y, shoot, xMouse, yMouse, angle)
