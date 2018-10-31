@@ -147,25 +147,28 @@ class statuBar():
 		self.surf = surface
 		self.color = color
 		self.mainSurf = pygame.Surface(size)
-		self.mainSurf.set_alpha(0)
+		self.mainSurf.fill((128, 128, 128))
+		self.mainSurf.set_colorkey((128, 128, 128))
 		self.rectMainSurf = self.mainSurf.get_rect()
+		self.offset =  self.rectMainSurf.height/4
 		self.rectMainSurf.x = position[0]
 		self.rectMainSurf.y = position[1]
 		if len(text) != 0:
 			self.isText = True
 			self.text = text
-			self.font = pygame.font.Font(None, round(size[1]*0.6))
-			self.frame = pygame.Rect((position[0]/2, position[1]), (size[0]/2, size[1]))
-			self.emptyBar = pygame.Rect(tuple(map(operator.add, (position[0]/2, position[1]), percentPix((1,1)))), tuple(map(operator.sub, (size[0]/2, size[1]), percentPix((0.5,0.5)))))
+			self.font = pygame.font.Font(None, round(size[1]*0.5))
+			self.frame = pygame.Rect((0,self.offset), (int(round(size[0]*0.6)), 2*self.offset))
+			self.emptyBar = pygame.Rect(tuple(map(operator.add, (0,self.offset), percentPix((1,1)))), tuple(map(operator.sub, (int(round(size[0]*0.6)), 2*self.offset), percentPix((0.5,0.5)))))
 			self.bar = self.emptyBar.copy()
 			self.renderedText = self.font.render(self.text, True, (255, 255, 255))
 		else:
 			self.isText = False
-			self.frame = pygame.Rect((position[0]/2, position[1]), (size[0], size[1]))
-			self.emptyBar = pygame.Rect(tuple(map(operator.add, (position[0]/2, position[1]), percentPix((1,1)))), tuple(map(operator.sub, size, percentPix((0.5,0.5)))))
+			self.frame = pygame.Rect((0,self.offset), (size[0], 2*self.offset))
+			self.emptyBar = pygame.Rect(tuple(map(operator.add, (0, self.offset), percentPix((1,1)))), tuple(map(operator.sub, (size[0], 2*self.offset), percentPix((0.5,0.5)))))
 			self.bar = self.emptyBar.copy()
 
-		self.unit = int(self.bar.width/total)
+		self.unit = int(round(self.bar.width/total))
+
 
 
 
@@ -177,13 +180,13 @@ class statuBar():
 
 
 	def display(self):
-		self.surf.blit(self.mainSurf, self.rectMainSurf)
 		self.emptyBar.center = self.frame.center
 		self.bar.midleft = self.emptyBar.midleft
-		pygame.draw.rect(self.surf, [255,255,255], self.frame)
-		pygame.draw.rect(self.surf, [0,0,0], self.emptyBar)
-		pygame.draw.rect(self.surf, self.color, self.bar)
+		pygame.draw.rect(self.mainSurf, [255,255,255], self.frame)
+		pygame.draw.rect(self.mainSurf, [0,0,0], self.emptyBar)
+		pygame.draw.rect(self.mainSurf, self.color, self.bar)
 		if self.isText:
 			self.renderedTextRect = self.renderedText.get_rect()
-			self.renderedTextRect.midleft = tuple(map(operator.add, self.frame.midright, percentPix((2,0))))
-			self.surf.blit(self.renderedText, self.renderedTextRect)
+			self.renderedTextRect.midleft = tuple(map(operator.add, self.frame.midright, percentPix((1,0))))
+			self.mainSurf.blit(self.renderedText, self.renderedTextRect)
+		pygame.Surface.blit(self.surf, self.mainSurf, self.rectMainSurf)

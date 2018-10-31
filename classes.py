@@ -56,12 +56,8 @@ class Manager():
 	def menu(self):
 		#things that need to be ignited once
 		MenuFont = self.Font.render("Space Invaders", True, [255,255,255])
-		self.loadButtons()
+		self.button_list = self.loadButtons(self.MENU)
 		pygame.mouse.set_visible(True)
-		self.menuPlaySoloButton.display()
-		self.menuPlayMultiButton.display()
-		self.menuSettingButton.display()
-		self.menuLeaveButton.display()
 
 		while True:
 			#in this loop place things that need to be looped in the menu
@@ -69,10 +65,9 @@ class Manager():
 			pygame.mouse.set_visible(True)
 			self.window.blit(self.MenuSurf, (0,0))
 			self.window.blit(MenuFont, percentPix((42, 15)))
-			self.menuPlaySoloButton.display()
-			self.menuPlayMultiButton.display()
-			self.menuSettingButton.display()
-			self.menuLeaveButton.display()
+			for buttons in self.button_list:
+				buttons.display()
+
 			for eventMenu in pygame.event.get():
 				if eventMenu.type == pygame.QUIT:
 					return self.LEAVE
@@ -93,12 +88,20 @@ class Manager():
 	def solo(self):
 		stateGame = True #if True, mode is on play, if not, mode is on pause
 		self.loadSetting()
-		self.loadButtons()
+		self.button_list = self.loadButtons(self.SOLO)
+		left_team = pygame.sprite.Group()
+		right_team = pygame.sprite.Group()
 		#things that need to be ignited once for the play part
 		aim = Aim(self.window)
 		player = Player(self.playername, X11(self.window, 10, 10))
 		enemy = Enemy("Simple ennemy", X11(self.window, 1600, 500, False))
 		enemy2 = Enemy("a second enemy",X11(self.window, 1600, 600, False))
+		left_team.add(player.spacecraft)
+		right_team.add(enemy.spacecraft, enemy2.spacecraft)
+		entityList = [player, enemy, enemy2]
+		for entity in entityList:
+			entity.display_life()
+			entity.display_name()
 
 		#things that need to be ignited once for the solo pause part
 		PauseFont = self.Font.render("PAUSE", True,[255, 255, 255])
@@ -132,20 +135,18 @@ class Manager():
 				enemy2.move()
 				enemy.spacecraft.shoot(player)
 				enemy2.spacecraft.shoot(player)
-				enemy.spacecraft.update()
-				enemy2.spacecraft.update()
-				player.spacecraft.update()
-				player.display_name()
+				right_team.update(left_team)
+				left_team.update(right_team)
+				for entity in entityList:
+					entity.update()
 				aim.focusAim()
 
 			if not stateGame:
 				pygame.mouse.set_visible(True)
 				self.window.blit(self.pauseSurf, (0,0))
 				self.window.blit(PauseFont, percentPix((47,20)))
-				self.backToGameButton.display()
-				self.backToMenuButton.display()
-				self.pauseSettingButton.display()
-				self.pauseLeaveButton.display()
+				for buttons in self.button_list:
+					buttons.display()
 				for eventPause in pygame.event.get():
 					if eventPause.type == pygame.QUIT:
 						stateGame = True
@@ -153,6 +154,7 @@ class Manager():
 						if self.backToGameButton.isCliked():
 							pygame.mouse.set_visible(False)
 							stateGame = True
+							self.button_list = self.loadButtons(self.SOLO)
 						if self.backToMenuButton.isCliked():
 							return self.MENU
 						if self.pauseSettingButton.isCliked():
@@ -163,10 +165,11 @@ class Manager():
 							return self.LEAVE
 					if eventPause.type == pygame.KEYDOWN:
 						if eventPause.key == pygame.K_ESCAPE:
+							pygame.mouse.set_visible(False)
 							stateGame = True
+							self.button_list = self.loadButtons(self.SOLO)
 					if eventPause.type == pygame.QUIT:
 						return LEAVE
-				pygame.mouse.set_visible(False)
 
 			pygame.display.flip()
 
@@ -228,17 +231,16 @@ class Manager():
 				#place here things that need to be ignited once
 				SettingFont = self.Font.render("Settings", True, [255, 255, 255])
 				playerName = inputBox(self.SettingSurf, percentPix((35, 20)), percentPix((20, 8)), [0,0,0], "Name")
-				self.loadButtons()
+				self.button_list = self.loadButtons(self.SETTINGS)
 				#in this loop place things that need to be looped in the menu
 				while True:
 					self.clock.tick(60)
 					pygame.mouse.set_visible(True)
 					self.window.blit(self.SettingSurf, (0,0))
 					self.window.blit(SettingFont, percentPix((47, 15)))
-					self.fullscreenButton.display()
-					self.windowedButton.display()
-					self.saveButton.display()
-					self.backButton.display()
+					for buttons in self.button_list:
+						buttons.display()
+
 					for eventSetting in pygame.event.get():
 						if eventSetting.type == pygame.QUIT:
 							return self.LEAVE
@@ -287,19 +289,26 @@ class Manager():
 	def loadPictures(self):
 		self.icon = pygame.image.load("./pictures/spaceInvaders_icon.jpg")
 		self.gameSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
-		self.MenuSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
-		self.SettingSurf = pygame.transform.scale(load_file("./pictures/background.png"), self.displaySize)
+		self.gameSurf = self.gameSurf.convert()
+		self.MenuSurf = self.gameSurf.copy()
+		self.SettingSurf = self.gameSurf.copy()
 
-	def loadButtons(self):
-		self.menuPlaySoloButton = Button(percentPix((50, 30)), self.MenuSurf, percentPix((20,15)), "Solo", self.Font, "./pictures/graySquareButton.png")
-		self.menuPlayMultiButton = Button(percentPix((50,47)), self.MenuSurf, percentPix((20,15)), "Multi", self.Font, "./pictures/graySquareButton.png")
-		self.menuSettingButton =  Button(percentPix((50,64)), self.MenuSurf, percentPix((20,15)), "Settings", self.Font, "./pictures/graySquareButton.png")
-		self.menuLeaveButton = Button(percentPix((50,81)), self.MenuSurf, percentPix((20,15)),"Leave the Game", self.Font, "./pictures/graySquareButton.png")
-		self.backToGameButton = Button(percentPix((50,35)), self.pauseSurf, percentPix((20,15)), "Back to game", self.Font, "./pictures/graySquareButton.png")
-		self.backToMenuButton = Button(percentPix((50, 50)), self.pauseSurf, percentPix((20, 15)), "Back to menu", self.Font, "./pictures/graySquareButton.png")
-		self.pauseSettingButton = Button(percentPix((50,65)), self.pauseSurf, percentPix((20,15)),"Settings", self.Font, "./pictures/graySquareButton.png")
-		self.pauseLeaveButton = Button(percentPix((50,80)), self.pauseSurf, percentPix((20,15)), "Leave the Game", self.Font, "./pictures/graySquareButton.png")
-		self.fullscreenButton = Button(percentPix((65, 50)), self.SettingSurf, percentPix((20, 15)), "Fullscreen",self.Font, "./pictures/graySquareButton.png")
-		self.windowedButton = Button(percentPix((35, 50)), self.SettingSurf, percentPix((20, 15)), "Windowed",self.Font, "./pictures/graySquareButton.png")
-		self.saveButton = Button(percentPix((65, 25)), self.SettingSurf, percentPix((10, 15)), "Save",self.Font, "./pictures/graySquareButton.png")
-		self.backButton = Button(percentPix((5, 90)), self.SettingSurf, percentPix((5.50,6.00)), "back", self.Font)
+	def loadButtons(self, state=None):
+		if state  == self.MENU:
+			self.menuPlaySoloButton = Button(percentPix((50, 30)), self.MenuSurf, percentPix((20,15)), "Solo", self.Font, "./pictures/graySquareButton.png")
+			self.menuPlayMultiButton = Button(percentPix((50,47)), self.MenuSurf, percentPix((20,15)), "Multi", self.Font, "./pictures/graySquareButton.png")
+			self.menuSettingButton =  Button(percentPix((50,64)), self.MenuSurf, percentPix((20,15)), "Settings", self.Font, "./pictures/graySquareButton.png")
+			self.menuLeaveButton = Button(percentPix((50,81)), self.MenuSurf, percentPix((20,15)),"Leave the Game", self.Font, "./pictures/graySquareButton.png")
+			return [self.menuPlaySoloButton, self.menuPlayMultiButton, self.menuSettingButton, self.menuLeaveButton]
+		elif state == self.SOLO:
+			self.backToGameButton = Button(percentPix((50,35)), self.pauseSurf, percentPix((20,15)), "Back to game", self.Font, "./pictures/graySquareButton.png")
+			self.backToMenuButton = Button(percentPix((50, 50)), self.pauseSurf, percentPix((20, 15)), "Back to menu", self.Font, "./pictures/graySquareButton.png")
+			self.pauseSettingButton = Button(percentPix((50,65)), self.pauseSurf, percentPix((20,15)),"Settings", self.Font, "./pictures/graySquareButton.png")
+			self.pauseLeaveButton = Button(percentPix((50,80)), self.pauseSurf, percentPix((20,15)), "Leave the Game", self.Font, "./pictures/graySquareButton.png")
+			return [self.backToGameButton, self.backToMenuButton, self.pauseSettingButton, self.pauseLeaveButton]
+		elif state == self.SETTINGS:
+			self.fullscreenButton = Button(percentPix((65, 50)), self.SettingSurf, percentPix((20, 15)), "Fullscreen",self.Font, "./pictures/graySquareButton.png")
+			self.windowedButton = Button(percentPix((35, 50)), self.SettingSurf, percentPix((20, 15)), "Windowed",self.Font, "./pictures/graySquareButton.png")
+			self.saveButton = Button(percentPix((65, 25)), self.SettingSurf, percentPix((10, 15)), "Save",self.Font, "./pictures/graySquareButton.png")
+			self.backButton = Button(percentPix((5, 90)), self.SettingSurf, percentPix((5.50,6.00)), "back", self.Font)
+			return [self.fullscreenButton, self.windowedButton, self.saveButton, self.backButton]

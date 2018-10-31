@@ -1,7 +1,9 @@
 import pygame
 from functions import *
+from widgets import *
 import math
 import random
+
 
 
 class Bullet:
@@ -22,13 +24,15 @@ class Bullet:
 		self.b = self.rect.y - self.coof*self.rect.x+height/2
 		self.angle = angle
 		self.image = pygame.transform.rotate(self.image, self.angle)
+		self.mask = pygame.mask.from_surface(self.image)
 
 	def update(self):
 		self.rect.x +=self.speed
 		self.rect.y = self.coof * self.rect.x +self.b
 
-class SpaceShip:
+class SpaceShip(pygame.sprite.Sprite):
 	def __init__(self, display, x, y, image, direction=True, frequency=20):
+		pygame.sprite.Sprite.__init__(self)
 		self.display = display
 		self.direction = direction
 		self.strForImage2 = image[:len(image)-4] + '2' + image[-4:]
@@ -41,12 +45,13 @@ class SpaceShip:
 			self.image2 = pygame.transform.flip(self.image2, True, False)
 			self.image3 = pygame.transform.flip(self.image3, True, False)
 		self.currentImage = self.image
-		self.rect = self.image.get_rect()
+		self.mask = pygame.mask.from_surface(self.currentImage)
+		self.rect = self.currentImage.get_rect()
 		self.rect.x, self.rect.y = (x, y)
 		self.height, self.width= (self.rect[-1], self.rect[-2])
 		self.widthDisplay, self.heightDisplay = pygame.display.get_surface().get_size()
 		self.bullet = Bullet
-		self.list_bullets = []
+		self.list_bullets = pygame.sprite.Group()
 		self.alive = True
 		self.incrementFor1Second = 0
 		self.frequency = frequency
@@ -63,11 +68,10 @@ class SpaceShip:
 
 			elif not player:
 				self.list_bullets.append(self.bullet(self.rect.x, self.rect.y, self.height, mouseAngle(self), 20, True, None, None, self.direction))
-
 			self.lastShots = self.lastShots-1
 		else: pass
 
-	def update(self):
+	def update(self, targets=None):
 		self.incrementFor1Second += 1
 		if self.incrementFor1Second == 1:
 			self.currentImage = self.image
@@ -78,13 +82,20 @@ class SpaceShip:
 			self.lastShots = self.frequency
 			self.incrementFor1Second = 0
 
-		for bullet in self.list_bullets:
-			bullet.update()
-			if not self.display.get_rect().colliderect(bullet.rect):
-				del(self.list_bullets[self.list_bullets.index(bullet)])
+		self.mask = pygame.mask.from_surface(self.currentImage)
 
+
+		self.list_bullets.update()
+
+		for bullet in self.list_bullets.sprites():
+			if not self.display.get_rect().colliderect(bullet.rect):
+				self.list_bullets.remove(bullet)
 			else:
 				self.display.blit(bullet.image, (bullet.rect.x, bullet.rect.y))
+		if targets:
+			for target in targets.sprites():
+				if pygame.sprite.spritecollide(target, self.list_bullets, True, pygame.sprite.collide_mask):
+					target.life = target.life - 1
 
 		self.display.blit(self.currentImage, (self.rect.x, self.rect.y))
 
@@ -105,13 +116,34 @@ class Player:
 		self.name = name
 		self.spacecraft = spacecraft
 		self.font = pygame.font.SysFont(None, 25)
+		self.lifeBar = statuBar(spacecraft.life, spacecraft.display, (spacecraft.rect.bottomleft), (spacecraft.rect.width, percentPix((5,5))[1]), [255, 255, 0], "life")
+		self.currentLife  = self.spacecraft.life
+		self.lifeBarDisplayed = False
+		self.nameDisplayed = False
 
 	def display_name(self):
+		self.nameDisplayed = True
 		self.renderedName = self.font.render(self.name, True, (255,255,255))
 		self.rectRenderedName = self.renderedName.get_rect()
 		self.rectRenderedName.top = self.spacecraft.rect.bottom
 		self.rectRenderedName.midtop = self.spacecraft.rect.midbottom
 		self.spacecraft.display.blit(self.renderedName, self.rectRenderedName)
+
+	def display_life(self):
+		self.lifeBarDisplayed = True
+		if not self.nameDisplayed:
+			self.lifeBar.rectMainSurf.midtop = self.spacecraft.rect.midbottom
+		else:
+			self.lifeBar.rectMainSurf.midtop = self.rectRenderedName.midbottom
+		self.lifeBar.display()
+
+	def update(self):
+		if self.nameDisplayed:
+			self.display_name()
+		if self.lifeBarDisplayed:
+			self.display_life()
+		self.lifeBar.update(self.spacecraft.life-self.currentLife)
+		self.currentLife = self.spacecraft.life
 
 
 	def move(self, posx, posy):
@@ -140,10 +172,7 @@ class Player:
 		return list
 
 
-class Enemy:
-	def __init__(self, name, spacecraft):
-		self.name = name
-		self.spacecraft = spacecraft
+class Enemy(Player):
 
 	def move(self):
 		"""
