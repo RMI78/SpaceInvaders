@@ -72,6 +72,7 @@ class SpaceShip(pygame.sprite.Sprite):
 			self.lastShots = self.lastShots-1
 		else: pass
 
+
 	def update(self, targets=None):
 		self.incrementFor1Second += 1
 		if self.incrementFor1Second == 1:
@@ -147,6 +148,12 @@ class Player:
 		self.currentLife = self.spacecraft.life
 
 
+	def isDead(self):
+		if self.spacecraft.life == 0:
+			return True
+		else: return False
+
+
 	def move(self, posx, posy):
 		"""
 		The move method to let the player move
@@ -193,3 +200,10 @@ class Enemy(Player):
 		if not display.colliderect(self.spacecraft.rect):
 			self.spacecraft.rect.y -= self.spacecraft.speed*posy
 			self.spacecraft.rect.x -= self.spacecraft.speed*posx
+
+
+	def __del__(self):
+		self.spacecraft.kill()
+		self.lifeBarDisplayed = False
+		self.nameDisplayed = False
+		self = None
